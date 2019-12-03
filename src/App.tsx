@@ -24,12 +24,42 @@ class App extends React.Component<
     };
   }
   render() {
-    console.log("rerendering");
     return (
       <div className="App">
+        <Puzzle
+          pathSets={this.state.districts.map(district => district.paths)}
+        />
+      </div>
+    );
+  }
+}
+
+class Puzzle extends React.Component<
+  {
+    pathSets: string[][];
+  },
+  {
+    pieces: {
+      key: string;
+      paths: string[];
+    }[];
+  }
+> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pieces: props.pathSets.map((paths, index) => ({
+        key: index,
+        paths
+      }))
+    };
+  }
+  render() {
+    return (
+      <div className="Puzzle">
         <svg width={1000} height={1000} viewBox="-8847 3022 478 478">
-          {this.state.districts.map((district, index) => (
-            <District
+          {this.state.pieces.map((district, index) => (
+            <PuzzlePiece
               paths={district.paths}
               key={district.key}
               onDragStart={() => this.handleDrag(index)}
@@ -40,23 +70,24 @@ class App extends React.Component<
       </div>
     );
   }
-  handleDrag(index: number) {
-    console.log("handling drag", index);
+  movePieceToFront(index: number) {
     this.setState({
-      districts: [
-        ...this.state.districts.slice(0, index),
-        ...this.state.districts.slice(index + 1, this.state.districts.length),
-        this.state.districts[index]
+      pieces: [
+        ...this.state.pieces.slice(0, index),
+        ...this.state.pieces.slice(index + 1, this.state.pieces.length),
+        this.state.pieces[index]
       ]
     });
-    console.log("handling drag", this.state.districts);
+  }
+  handleDrag(index: number) {
+    this.movePieceToFront(index);
   }
   handleDragStop() {
     console.log("handle drag end");
   }
 }
 
-class District extends React.Component<
+class PuzzlePiece extends React.Component<
   { paths: string[]; onDragStart: () => any; onDragStop: () => any },
   {
     translate: [number, number];
