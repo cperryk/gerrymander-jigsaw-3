@@ -1,14 +1,18 @@
 import { read } from "shapefile";
 import { join } from "path";
 
-import { FeatureCollection } from "geojson";
-import { outputJson } from "fs-extra";
+import { FeatureCollection, Feature } from "geojson";
+import { outputJson, outputFile } from "fs-extra";
+import xml2js from "xml2js";
 
 import SVGO from "svgo";
+import { scaleLinear, ScaleLinear } from "d3";
+import flatten from "flatten";
 
 const geojsonToSvg = require("geojson-to-svg");
+const parseSvgPath = require("parse-svg-path");
 
-const OUT_DIR = join(__dirname, "..", "dist", "svg");
+const OUT_DIR = join(__dirname, "..", "src", "districts");
 const INPUT_DIR = join(
   __dirname,
   "..",
@@ -21,33 +25,57 @@ async function readShapefile(shapeFilePath: string, dbFilePath: string) {
   return read(shapeFilePath, dbFilePath);
 }
 
+async function extractPaths(svg: string): Promise<string[]> {
+  const parsed = await xml2js.parseStringPromise(svg);
+  const paths = parsed.svg.path.map(path => path.$.d);
+  return paths;
+}
+
+async function optimize(svg: string) {
+  const svgo = new SVGO({
+    plugins: [
+      {
+        convertPathData: true
+      }
+    ]
+  });
+  return (await svgo.optimize(svg)).data;
+}
+
 async function toSvgHash(
   featureCollection: FeatureCollection
-): Promise<{ [key: string]: string }> {
+): Promise<{ [key: string]: string[] }> {
   const prev = {};
   for (const curr of featureCollection.features) {
     const district = curr.properties.DISTRICT;
     const state = curr.properties.STATE;
     const svg = await geojsonToSvg()
+      .projection(([x, y]) => {
+        return [Math.trunc(x * 100), Math.trunc(y * 100)];
+      })
       .data(curr)
       .render();
     const optimized = await optimize(svg);
-    prev[`${state}-${district}`] = optimized;
+    const paths = await extractPaths(optimized);
+    prev[`${state}-${district}`] = paths;
   }
   return prev;
 }
 
-async function optimize(svg: string) {
-  const svgo = new SVGO();
-  return (await svgo.optimize(svg)).data;
+function toSvg(svgHash, viewBox: [number, number, number, number]): string {
+  const pathEls = Object.values(svgHash)
+    .map(path => `<path d="${path}"/>`)
+    .join("\n");
+  return `<svg viewBox="${viewBox.join(
+    " "
+  )}" xmlns="http://www.w3.org/2000/svg" version="1.2">${pathEls}</svg>`;
 }
 
 async function go(inFile: string, inDataFile: string, outFile: string) {
   const featureCollection = await readShapefile(inFile, inDataFile);
   const svgHash = await toSvgHash(featureCollection);
-  console.log(svgHash);
   await outputJson(outFile, svgHash);
-  console.log(`written: ${outFile}`);
+  outputFile("test.svg", toSvg(svgHash, [-8847, 3022, 358, 478]));
 }
 
 const inFile = join(INPUT_DIR, "AL-current.shp");
