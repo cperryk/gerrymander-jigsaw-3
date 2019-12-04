@@ -3,7 +3,6 @@ import "./App.css";
 import districts from "../src/districts/al.json";
 import Draggable from "react-draggable";
 import chroma from "chroma-js";
-import { range } from "d3";
 
 function getDistricts(): DistrictData[] {
   // return { "AL-01": districts["AL-01"] };
@@ -51,7 +50,7 @@ class Puzzle extends React.Component<
     super(props);
     const colorScale = chroma
       .scale("RdYlBu")
-      .domain(range(props.pathSets.length), props.pathSets.length, "quantiles");
+      .domain([0, props.pathSets.length], props.pathSets.length, "quantiles");
     this.state = {
       pieces: props.pathSets.map((paths, index) => ({
         key: index,
