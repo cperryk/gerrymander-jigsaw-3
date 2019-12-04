@@ -1,8 +1,9 @@
 import React, { FunctionComponent } from "react";
 import "./App.css";
 import districts from "../src/districts/al.json";
-import randomcolor from "randomcolor";
 import Draggable from "react-draggable";
+import chroma from "chroma-js";
+import { range } from "d3";
 
 function getDistricts(): DistrictData[] {
   // return { "AL-01": districts["AL-01"] };
@@ -42,15 +43,20 @@ class Puzzle extends React.Component<
     pieces: {
       key: string;
       paths: string[];
+      color: string;
     }[];
   }
 > {
   constructor(props) {
     super(props);
+    const colorScale = chroma
+      .scale("RdYlBu")
+      .domain(range(props.pathSets.length), props.pathSets.length, "quantiles");
     this.state = {
       pieces: props.pathSets.map((paths, index) => ({
         key: index,
-        paths
+        paths,
+        color: colorScale(index / paths.length).hex()
       }))
     };
   }
@@ -58,10 +64,11 @@ class Puzzle extends React.Component<
     return (
       <div className="Puzzle">
         <svg width={1000} height={1000} viewBox="-8847 3022 478 478">
-          {this.state.pieces.map((district, index) => (
+          {this.state.pieces.map((piece, index) => (
             <PuzzlePiece
-              paths={district.paths}
-              key={district.key}
+              paths={piece.paths}
+              key={piece.key}
+              color={piece.color}
               onDragStart={() => this.handleDrag(index)}
               onDragStop={() => this.handleDragStop()}
             />
@@ -88,11 +95,15 @@ class Puzzle extends React.Component<
 }
 
 class PuzzlePiece extends React.Component<
-  { paths: string[]; onDragStart: () => any; onDragStop: () => any },
+  {
+    paths: string[];
+    onDragStart: () => any;
+    onDragStop: () => any;
+    color: string;
+  },
   {
     translate: [number, number];
     color: string;
-    originalColor: string;
     hoverColor: string;
     dragColor: string;
     dragging: boolean;
@@ -100,13 +111,11 @@ class PuzzlePiece extends React.Component<
 > {
   constructor(props) {
     super(props);
-    const color = randomcolor();
     this.state = {
       translate: [50, 0],
-      originalColor: color,
       dragColor: "yellow",
       hoverColor: "rgb(100%, 100%, 44.1%)",
-      color,
+      color: this.props.color,
       dragging: false
     };
   }
@@ -148,7 +157,7 @@ class PuzzlePiece extends React.Component<
   handleMouseOut() {
     if (!this.state.dragging) {
       this.setState({
-        color: this.state.originalColor
+        color: this.props.color
       });
     }
   }
@@ -162,7 +171,7 @@ class PuzzlePiece extends React.Component<
   handleDragStop() {
     this.setState({
       dragging: false,
-      color: this.state.originalColor
+      color: this.props.color
     });
     this.props.onDragStop();
   }

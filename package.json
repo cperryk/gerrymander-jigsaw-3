@@ -6,7 +6,7 @@
     "@types/jest": "24.0.23",
     "@types/react": "16.9.11",
     "@types/react-dom": "16.9.4",
-    "colormap": "^2.3.1",
+    "chroma-js": "^2.1.0",
     "d3": "^5.14.2",
     "flatten": "^1.0.3",
     "fs-extra": "^8.1.0",
@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@types/chroma-js": "^1.4.3",
     "@types/d3": "^5.7.2",
     "@types/fs-extra": "^8.0.1",
     "@types/node": "^12.12.9",
