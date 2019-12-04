@@ -3,6 +3,7 @@ import "./App.css";
 import districts from "../src/districts/al.json";
 import Draggable from "react-draggable";
 import chroma from "chroma-js";
+import { ReactComponent } from "*.svg";
 
 function getDistricts(): DistrictData[] {
   // return { "AL-01": districts["AL-01"] };
@@ -68,7 +69,7 @@ class Puzzle extends React.Component<
         paths={piece.paths}
         key={piece.key}
         color={piece.color}
-        threshold={10}
+        tolerance={20}
         onDragStart={() => this.handleDrag(index)}
         onDragStop={isSolved => this.handleDragStop(piece.key, isSolved)}
         solved={this.state.solved}
@@ -76,7 +77,11 @@ class Puzzle extends React.Component<
     ));
     return (
       <div className="Puzzle">
-        <svg width={1000} height={1000} viewBox="-8847 3022 478 478">
+        <svg width={1000} height={1000} viewBox="-8846 3022 478 478">
+          <PuzzleGuide
+            color="#e3e3e3"
+            paths={[].concat(this.state.pieces.map(piece => piece.paths))}
+          />
           {pieces}
         </svg>
       </div>
@@ -108,13 +113,36 @@ class Puzzle extends React.Component<
   }
 }
 
+class PuzzleGuide extends React.Component<{
+  paths: string[];
+  color: string;
+}> {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const pathEls = this.props.paths.map((path, index) => {
+      return (
+        <path
+          d={path}
+          stroke="{this.props.color}"
+          strokeWidth={0.5}
+          fill={this.props.color}
+          key={index}
+        />
+      );
+    });
+    return <g>{pathEls}</g>;
+  }
+}
+
 class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
     onDragStart: () => any;
     onDragStop: (isSolved: boolean) => any;
     color: string;
-    threshold: number;
+    tolerance: number;
     solved: boolean;
   },
   {
@@ -145,10 +173,12 @@ class PuzzlePiece extends React.PureComponent<
         <path
           d={path}
           stroke="gray"
-          strokeWidth={0.5}
+          strokeWidth={0.2}
           fill={this.state.color}
           key={index}
-          cursor="move"
+          strokeLinecap="square"
+          strokeMiterlimit={4}
+          cursor={this.props.solved ? "normal" : "move"}
         />
       );
     });
@@ -179,10 +209,10 @@ class PuzzlePiece extends React.PureComponent<
     if (typeof this.myRef === "object" && this.myRef && this.myRef.current) {
       this.originalPosition = this.getPosition();
       this.solutionBounds = {
-        x1: this.originalPosition.x - this.props.threshold,
-        x2: this.originalPosition.x + this.props.threshold,
-        y1: this.originalPosition.y - this.props.threshold,
-        y2: this.originalPosition.y + this.props.threshold
+        x1: this.originalPosition.x - this.props.tolerance,
+        x2: this.originalPosition.x + this.props.tolerance,
+        y1: this.originalPosition.y - this.props.tolerance,
+        y2: this.originalPosition.y + this.props.tolerance
       };
     }
   }
@@ -193,18 +223,16 @@ class PuzzlePiece extends React.PureComponent<
     }
   }
   handleMouseOver() {
-    if (!this.state.dragging) {
-      this.setState({
-        color: this.state.hoverColor
-      });
-    }
+    if (this.props.solved || this.state.dragging) return;
+    this.setState({
+      color: this.state.hoverColor
+    });
   }
   handleMouseOut() {
-    if (!this.state.dragging) {
-      this.setState({
-        color: this.props.color
-      });
-    }
+    if (this.props.solved || this.state.dragging) return;
+    this.setState({
+      color: this.props.color
+    });
   }
   handleDragStart() {
     this.setState({
