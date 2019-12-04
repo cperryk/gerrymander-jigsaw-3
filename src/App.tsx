@@ -1,12 +1,10 @@
-import React, { FunctionComponent, Ref, RefObject } from "react";
+import React, { Ref } from "react";
 import "./App.css";
 import districts from "../src/districts/al.json";
 import Draggable from "react-draggable";
 import chroma from "chroma-js";
-import { ReactComponent } from "*.svg";
 
 function getDistricts(): DistrictData[] {
-  // return { "AL-01": districts["AL-01"] };
   return Object.entries(districts).map(([key, paths]) => ({ key, paths }));
 }
 
@@ -77,7 +75,7 @@ class Puzzle extends React.Component<
     ));
     return (
       <div className="Puzzle">
-        <svg width={1000} height={1000} viewBox="-8846 3022 478 478">
+        <svg width={1000} height={1000} viewBox="0 0 1000 1000">
           <PuzzleGuide
             color="#e3e3e3"
             paths={[].concat(this.state.pieces.map(piece => piece.paths))}
@@ -184,7 +182,7 @@ class PuzzlePiece extends React.PureComponent<
     });
     return (
       <Draggable
-        scale={1000 / 478}
+        scale={1}
         onStart={this.handleDragStart.bind(this)}
         onStop={this.handleDragStop.bind(this)}
         disabled={this.props.solved}

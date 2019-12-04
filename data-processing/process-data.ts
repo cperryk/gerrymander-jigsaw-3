@@ -6,11 +6,9 @@ import { outputJson, outputFile } from "fs-extra";
 import xml2js from "xml2js";
 
 import SVGO from "svgo";
-import { scaleLinear, ScaleLinear } from "d3";
-import flatten from "flatten";
+import { scaleLinear } from "d3";
 
 const geojsonToSvg = require("geojson-to-svg");
-const parseSvgPath = require("parse-svg-path");
 
 const OUT_DIR = join(__dirname, "..", "src", "districts");
 const INPUT_DIR = join(
@@ -42,19 +40,40 @@ async function optimize(svg: string) {
   return (await svgo.optimize(svg)).data;
 }
 
+const mirror = (min: number, max: number) => {
+  const midpoint = min + (max - min) / 2;
+  return val =>
+    val > midpoint ? midpoint - (val - midpoint) : midpoint + (midpoint - val);
+};
+
 async function toSvgHash(
   featureCollection: FeatureCollection
 ): Promise<{ [key: string]: string[] }> {
   const prev = {};
+
+  const [minX, minY, maxX, maxY] = featureCollection.bbox;
+  const mapRange = Math.max(maxX - minX, maxY - minY);
+
+  const xScale = scaleLinear()
+    .domain([minX, minX + mapRange])
+    .range([0, 1000]);
+
+  const yScale = scaleLinear()
+    .domain([minY, minY + mapRange])
+    .range([0, 1000]);
+
+  const mirrorY = mirror(minY, maxY);
+
   for (const curr of featureCollection.features) {
     const district = curr.properties.DISTRICT;
     const state = curr.properties.STATE;
     const svg = await geojsonToSvg()
       .projection(([x, y]) => {
-        return [Math.trunc(x * 100), Math.trunc(y * 100)];
+        return [Math.trunc(xScale(x)), Math.trunc(yScale(mirrorY(y)))];
       })
       .data(curr)
       .render();
+
     const optimized = await optimize(svg);
     const paths = await extractPaths(optimized);
     prev[`${state}-${district}`] = paths;
@@ -75,7 +94,7 @@ async function go(inFile: string, inDataFile: string, outFile: string) {
   const featureCollection = await readShapefile(inFile, inDataFile);
   const svgHash = await toSvgHash(featureCollection);
   await outputJson(outFile, svgHash);
-  outputFile("test.svg", toSvg(svgHash, [-8847, 3022, 358, 478]));
+  outputFile("test.svg", toSvg(svgHash, [0, 0, 1000, 1000]));
 }
 
 const inFile = join(INPUT_DIR, "AL-current.shp");
