@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, Ref, RefObject } from "react";
 import "./App.css";
 import districts from "../src/districts/al.json";
 import Draggable from "react-draggable";
@@ -44,8 +44,10 @@ class Puzzle extends React.Component<
       paths: string[];
       color: string;
     }[];
+    solved: boolean;
   }
 > {
+  solutions: { [key: string]: boolean } = {};
   constructor(props) {
     super(props);
     const colorScale = chroma
@@ -56,27 +58,32 @@ class Puzzle extends React.Component<
         key: index,
         paths,
         color: colorScale(index / paths.length).hex()
-      }))
+      })),
+      solved: false
     };
   }
   render() {
+    const pieces = this.state.pieces.map((piece, index) => (
+      <PuzzlePiece
+        paths={piece.paths}
+        key={piece.key}
+        color={piece.color}
+        threshold={10}
+        onDragStart={() => this.handleDrag(index)}
+        onDragStop={isSolved => this.handleDragStop(piece.key, isSolved)}
+        solved={this.state.solved}
+      />
+    ));
     return (
       <div className="Puzzle">
         <svg width={1000} height={1000} viewBox="-8847 3022 478 478">
-          {this.state.pieces.map((piece, index) => (
-            <PuzzlePiece
-              paths={piece.paths}
-              key={piece.key}
-              color={piece.color}
-              onDragStart={() => this.handleDrag(index)}
-              onDragStop={() => this.handleDragStop()}
-            />
-          ))}
+          {pieces}
         </svg>
       </div>
     );
   }
   movePieceToFront(index: number) {
+    if (index === this.state.pieces.length - 1) return;
     this.setState({
       pieces: [
         ...this.state.pieces.slice(0, index),
@@ -88,17 +95,27 @@ class Puzzle extends React.Component<
   handleDrag(index: number) {
     this.movePieceToFront(index);
   }
-  handleDragStop() {
-    console.log("handle drag end");
+  handleDragStop(key: string, isSolved: boolean) {
+    this.solutions[key] = isSolved;
+    if (this.isAllSolved()) {
+      this.setState({
+        solved: true
+      });
+    }
+  }
+  isAllSolved(): boolean {
+    return Object.values(this.solutions).every(val => val === true);
   }
 }
 
-class PuzzlePiece extends React.Component<
+class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
     onDragStart: () => any;
-    onDragStop: () => any;
+    onDragStop: (isSolved: boolean) => any;
     color: string;
+    threshold: number;
+    solved: boolean;
   },
   {
     translate: [number, number];
@@ -108,6 +125,9 @@ class PuzzlePiece extends React.Component<
     dragging: boolean;
   }
 > {
+  private myRef: Ref<SVGGElement>;
+  private originalPosition: { x: number; y: number };
+  private solutionBounds: { x1: number; x2: number; y1: number; y2: number };
   constructor(props) {
     super(props);
     this.state = {
@@ -117,6 +137,7 @@ class PuzzlePiece extends React.Component<
       color: this.props.color,
       dragging: false
     };
+    this.myRef = React.createRef();
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -136,15 +157,40 @@ class PuzzlePiece extends React.Component<
         scale={1000 / 478}
         onStart={this.handleDragStart.bind(this)}
         onStop={this.handleDragStop.bind(this)}
+        disabled={this.props.solved}
       >
         <g
           onMouseOver={this.handleMouseOver.bind(this)}
           onMouseOut={this.handleMouseOut.bind(this)}
+          ref={this.myRef}
         >
           {pathEls}
         </g>
       </Draggable>
     );
+  }
+  getPosition(): { x: number; y: number } | null {
+    if (typeof this.myRef === "object" && this.myRef && this.myRef.current) {
+      const rect = this.myRef.current.getBoundingClientRect();
+      return { x: rect.left - window.scrollX, y: rect.top - window.scrollY };
+    }
+  }
+  componentDidMount() {
+    if (typeof this.myRef === "object" && this.myRef && this.myRef.current) {
+      this.originalPosition = this.getPosition();
+      this.solutionBounds = {
+        x1: this.originalPosition.x - this.props.threshold,
+        x2: this.originalPosition.x + this.props.threshold,
+        y1: this.originalPosition.y - this.props.threshold,
+        y2: this.originalPosition.y + this.props.threshold
+      };
+    }
+  }
+  componentDidUpdate() {
+    if (this.props.solved && typeof this.myRef === "object") {
+      const { x, y } = this.originalPosition;
+      this.myRef.current.setAttribute("transform", "");
+    }
   }
   handleMouseOver() {
     if (!this.state.dragging) {
@@ -172,7 +218,16 @@ class PuzzlePiece extends React.Component<
       dragging: false,
       color: this.props.color
     });
-    this.props.onDragStop();
+    this.props.onDragStop(this.isSolved());
+  }
+  isSolved(): boolean {
+    const { x, y } = this.getPosition();
+    return (
+      x > this.solutionBounds.x1 &&
+      x < this.solutionBounds.x2 &&
+      y > this.solutionBounds.y1 &&
+      y < this.solutionBounds.y2
+    );
   }
 }
 
