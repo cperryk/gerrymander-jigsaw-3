@@ -20,3 +20,7 @@
 .App-link {
   color: #09d3ac;
 }
+
+.Puzzle svg {
+  border: 1px solid #c7c7c7;
+}

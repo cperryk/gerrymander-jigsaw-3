@@ -93,7 +93,6 @@ export class PuzzlePiece extends React.PureComponent<
   }
   componentDidUpdate() {
     if (this.props.solved && typeof this.myRef === "object") {
-      const { x, y } = this.originalPosition;
       this.myRef.current.setAttribute("transform", "");
     }
   }

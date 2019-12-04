@@ -1,12 +1,14 @@
 import { read } from "shapefile";
 import { join } from "path";
 
-import { FeatureCollection, Feature } from "geojson";
-import { outputJson, outputFile } from "fs-extra";
+import { FeatureCollection } from "geojson";
+import { outputJson } from "fs-extra";
 import xml2js from "xml2js";
 
 import SVGO from "svgo";
-import { scaleLinear } from "d3";
+import { scaleLinear, ScaleLinear } from "d3";
+import reproject from "reproject";
+import epsg from "epsg";
 
 const geojsonToSvg = require("geojson-to-svg");
 
@@ -18,6 +20,14 @@ const INPUT_DIR = join(
   "redistricting-atlas-data",
   "shp"
 );
+
+const PUZZLE = {
+  startX: 0,
+  startY: 0,
+  width: 1000,
+  height: 1000,
+  gutter: 200
+};
 
 async function readShapefile(shapeFilePath: string, dbFilePath: string) {
   return read(shapeFilePath, dbFilePath);
@@ -34,6 +44,11 @@ async function optimize(svg: string) {
     plugins: [
       {
         convertPathData: true
+      },
+      {
+        cleanupNumericValues: {
+          floatPrecision: 0
+        }
       }
     ]
   });
@@ -46,31 +61,66 @@ const mirror = (min: number, max: number) => {
     val > midpoint ? midpoint - (val - midpoint) : midpoint + (midpoint - val);
 };
 
-async function toSvgHash(
-  featureCollection: FeatureCollection
-): Promise<{ [key: string]: string[] }> {
-  const prev = {};
+type position = [number, number];
+type projection = (position) => position;
 
+function applyProjections(...fncs: projection[]): projection {
+  return ([x, y]) => fncs.reduce((prev, fnc) => fnc(prev), [x, y]);
+}
+
+function scalePosition(
+  xScale: ScaleLinear<number, number>,
+  yScale: ScaleLinear<number, number>
+): projection {
+  return ([x, y]) => [xScale(x), yScale(y)];
+}
+
+function fitPuzzleBounds(featureCollection: FeatureCollection): projection {
   const [minX, minY, maxX, maxY] = featureCollection.bbox;
   const mapRange = Math.max(maxX - minX, maxY - minY);
 
   const xScale = scaleLinear()
     .domain([minX, minX + mapRange])
-    .range([0, 1000]);
+    .range([PUZZLE.startX + PUZZLE.gutter, PUZZLE.width - PUZZLE.gutter]);
 
   const yScale = scaleLinear()
     .domain([minY, minY + mapRange])
-    .range([0, 1000]);
+    .range([PUZZLE.startY + PUZZLE.gutter, PUZZLE.height - PUZZLE.gutter]);
 
-  const mirrorY = mirror(minY, maxY);
+  const horizontalCenteringOffset =
+    (PUZZLE.width - PUZZLE.gutter * 2 - (xScale(maxX) - xScale(minX))) / 2;
+
+  return applyProjections(
+    scalePosition(xScale, yScale),
+    offsetX(horizontalCenteringOffset)
+  );
+}
+
+function offsetX(offset: number): projection {
+  return ([x, y]) => [x + offset, y];
+}
+
+function mirrorY(featureCollection: FeatureCollection): projection {
+  const [minX, minY, maxX, maxY] = featureCollection.bbox;
+  const mirrorFnc = mirror(minY, maxY);
+  return ([x, y]) => [x, mirrorFnc(y)];
+}
+
+async function toSvgHash(
+  featureCollection: FeatureCollection
+): Promise<{ [key: string]: string[] }> {
+  const prev = {};
 
   for (const curr of featureCollection.features) {
     const district = curr.properties.DISTRICT;
     const state = curr.properties.STATE;
     const svg = await geojsonToSvg()
-      .projection(([x, y]) => {
-        return [Math.trunc(xScale(x)), Math.trunc(yScale(mirrorY(y)))];
-      })
+      .projection(
+        applyProjections(
+          mirrorY(featureCollection),
+          fitPuzzleBounds(featureCollection)
+        )
+      )
       .data(curr)
       .render();
 
@@ -81,24 +131,15 @@ async function toSvgHash(
   return prev;
 }
 
-function toSvg(svgHash, viewBox: [number, number, number, number]): string {
-  const pathEls = Object.values(svgHash)
-    .map(path => `<path d="${path}"/>`)
-    .join("\n");
-  return `<svg viewBox="${viewBox.join(
-    " "
-  )}" xmlns="http://www.w3.org/2000/svg" version="1.2">${pathEls}</svg>`;
-}
-
 async function go(inFile: string, inDataFile: string, outFile: string) {
-  const featureCollection = await readShapefile(inFile, inDataFile);
-  const svgHash = await toSvgHash(featureCollection);
+  let geojson = await readShapefile(inFile, inDataFile);
+  geojson = reproject.reproject(geojson, "WGS84", "EPSG:3994", epsg);
+  const svgHash = await toSvgHash(geojson);
   await outputJson(outFile, svgHash);
-  outputFile("test.svg", toSvg(svgHash, [0, 0, 1000, 1000]));
 }
 
-const inFile = join(INPUT_DIR, "AL-current.shp");
-const inDataFile = join(INPUT_DIR, "AL-current.dbf");
+const inFile = join(INPUT_DIR, "NY-current.shp");
+const inDataFile = join(INPUT_DIR, "NY-current.dbf");
 const outFile = join(OUT_DIR, "al.json");
 
 go(inFile, inDataFile, outFile).catch(err => {

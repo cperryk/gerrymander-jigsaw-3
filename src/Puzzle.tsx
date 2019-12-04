@@ -31,6 +31,10 @@ export class Puzzle extends React.Component<
       })),
       solved: false
     };
+    this.solutions = this.props.pathSets.reduce((prev, curr, index) => {
+      prev[index] = false;
+      return prev;
+    }, {});
   }
   render() {
     const pieces = this.state.pieces.map((piece, index) => (
@@ -38,7 +42,7 @@ export class Puzzle extends React.Component<
         paths={piece.paths}
         key={piece.key}
         color={piece.color}
-        tolerance={20}
+        tolerance={30}
         onDragStart={() => this.handleDrag(index)}
         onDragStop={isSolved => this.handleDragStop(piece.key, isSolved)}
         solved={this.state.solved}
@@ -71,7 +75,9 @@ export class Puzzle extends React.Component<
   }
   handleDragStop(key: string, isSolved: boolean) {
     this.solutions[key] = isSolved;
+    console.log(this.solutions);
     if (this.isAllSolved()) {
+      window.alert("solved!");
       this.setState({
         solved: true
       });
