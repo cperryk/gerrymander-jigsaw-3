@@ -4,6 +4,7 @@ import { join } from "path";
 import { FeatureCollection } from "geojson";
 import { outputJson } from "fs-extra";
 import xml2js from "xml2js";
+import { Conf } from "./conf";
 
 import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
@@ -12,23 +13,6 @@ import epsg from "epsg";
 import simplifyGeojson from "./simplify";
 
 const geojsonToSvg = require("geojson-to-svg");
-
-const OUT_DIR = join(__dirname, "..", "src", "districts");
-const INPUT_DIR = join(
-  __dirname,
-  "..",
-  "..",
-  "redistricting-atlas-data",
-  "shp"
-);
-
-const PUZZLE = {
-  startX: 0,
-  startY: 0,
-  width: 1000,
-  height: 1000,
-  gutter: 200
-};
 
 async function readShapefile(shapeFilePath: string, dbFilePath: string) {
   return read(shapeFilePath, dbFilePath);
@@ -82,20 +66,23 @@ function scalePosition(
   };
 }
 
-function fitPuzzleBounds(featureCollection: FeatureCollection): projection {
+function fitPuzzleBounds(
+  featureCollection: FeatureCollection,
+  conf: Conf
+): projection {
   const [minX, minY, maxX, maxY] = featureCollection.bbox;
   const mapRange = Math.max(maxX - minX, maxY - minY);
 
   const xScale = scaleLinear()
     .domain([minX, minX + mapRange])
-    .range([PUZZLE.startX + PUZZLE.gutter, PUZZLE.width - PUZZLE.gutter]);
+    .range([conf.svgStartX + conf.svgGutter, conf.svgWidth - conf.svgGutter]);
 
   const yScale = scaleLinear()
     .domain([minY, minY + mapRange])
-    .range([PUZZLE.startY + PUZZLE.gutter, PUZZLE.height - PUZZLE.gutter]);
+    .range([conf.svgStartY + conf.svgGutter, conf.svgHeight - conf.svgGutter]);
 
   const horizontalCenteringOffset =
-    (PUZZLE.width - PUZZLE.gutter * 2 - (xScale(maxX) - xScale(minX))) / 2;
+    (conf.svgWidth - conf.svgGutter * 2 - (xScale(maxX) - xScale(minX))) / 2;
 
   return applyProjections(
     scalePosition(xScale, yScale),
@@ -121,7 +108,8 @@ function filterFalsy(...projections: projection[]): projection {
 }
 
 async function toSvgHash(
-  featureCollection: FeatureCollection
+  featureCollection: FeatureCollection,
+  conf: Conf
 ): Promise<{ [key: string]: string[] }> {
   const prev = {};
 
@@ -132,7 +120,7 @@ async function toSvgHash(
       .projection(
         filterFalsy(
           mirrorY(featureCollection),
-          fitPuzzleBounds(featureCollection)
+          fitPuzzleBounds(featureCollection, conf)
         )
       )
       .data(curr)
@@ -145,19 +133,38 @@ async function toSvgHash(
   return prev;
 }
 
-async function go(inFile: string, inDataFile: string, outFile: string) {
-  let geojson = await readShapefile(inFile, inDataFile);
-  geojson = reproject.reproject(geojson, "WGS84", "EPSG:3994", epsg);
-  geojson = simplifyGeojson(geojson);
-  const svgHash = await toSvgHash(geojson);
-  await outputJson(outFile, svgHash);
+async function go(conf: Conf) {
+  let geojson = await readShapefile(conf.inShapeFilePath, conf.inDataFilePath);
+  geojson = reproject.reproject(geojson, conf.inputCRS, conf.outputCRS, epsg);
+  geojson = simplifyGeojson(geojson, conf);
+  const svgHash = await toSvgHash(geojson, conf);
+  await outputJson(conf.outPath, svgHash);
 }
 
-const inFile = join(INPUT_DIR, "NY-current.shp");
-const inDataFile = join(INPUT_DIR, "NY-current.dbf");
-const outFile = join(OUT_DIR, "al.json");
+const OUT_DIR = join(__dirname, "..", "src", "districts");
+const INPUT_DIR = join(
+  __dirname,
+  "..",
+  "..",
+  "redistricting-atlas-data",
+  "shp"
+);
 
-go(inFile, inDataFile, outFile).catch(err => {
+const conf: Conf = {
+  outPath: join(OUT_DIR, "al.json"),
+  inShapeFilePath: join(INPUT_DIR, "NY-current.shp"),
+  inDataFilePath: join(INPUT_DIR, "NY-current.dbf"),
+  inputCRS: "WGS84",
+  outputCRS: "EPSG:3994",
+  simplificationFactor: 20000000,
+  svgStartX: 0,
+  svgStartY: 0,
+  svgWidth: 1000,
+  svgHeight: 1000,
+  svgGutter: 100
+};
+
+go(conf).catch(err => {
   console.error(err);
   process.exit(1);
 });

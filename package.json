@@ -13,6 +13,7 @@
     "flatten": "^1.0.3",
     "fs-extra": "^8.1.0",
     "geojson-to-svg": "^1.0.3",
+    "lodash": "^4.17.15",
     "parse-svg-path": "^0.1.2",
     "randomcolor": "^0.5.4",
     "raphael": "^2.3.0",
