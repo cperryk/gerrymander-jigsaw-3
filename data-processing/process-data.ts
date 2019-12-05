@@ -9,6 +9,7 @@ import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
 import reproject from "reproject";
 import epsg from "epsg";
+import simplifyGeojson from "./simplify";
 
 const geojsonToSvg = require("geojson-to-svg");
 
@@ -65,14 +66,20 @@ type position = [number, number];
 type projection = (position) => position;
 
 function applyProjections(...fncs: projection[]): projection {
-  return ([x, y]) => fncs.reduce((prev, fnc) => fnc(prev), [x, y]);
+  return (a: position) => {
+    return fncs.reduce((prev, fnc) => {
+      return fnc(prev);
+    }, a);
+  };
 }
 
 function scalePosition(
   xScale: ScaleLinear<number, number>,
   yScale: ScaleLinear<number, number>
 ): projection {
-  return ([x, y]) => [xScale(x), yScale(y)];
+  return ([x, y]) => {
+    return [xScale(x), yScale(y)];
+  };
 }
 
 function fitPuzzleBounds(featureCollection: FeatureCollection): projection {
@@ -97,13 +104,20 @@ function fitPuzzleBounds(featureCollection: FeatureCollection): projection {
 }
 
 function offsetX(offset: number): projection {
-  return ([x, y]) => [x + offset, y];
+  return ([x, y]) => {
+    return [x + offset, y];
+  };
 }
 
 function mirrorY(featureCollection: FeatureCollection): projection {
   const [minX, minY, maxX, maxY] = featureCollection.bbox;
   const mirrorFnc = mirror(minY, maxY);
   return ([x, y]) => [x, mirrorFnc(y)];
+}
+
+function filterFalsy(...projections: projection[]): projection {
+  const next = applyProjections(...projections);
+  return (a: position) => (a ? next(a) : null);
 }
 
 async function toSvgHash(
@@ -116,7 +130,7 @@ async function toSvgHash(
     const state = curr.properties.STATE;
     const svg = await geojsonToSvg()
       .projection(
-        applyProjections(
+        filterFalsy(
           mirrorY(featureCollection),
           fitPuzzleBounds(featureCollection)
         )
@@ -134,6 +148,7 @@ async function toSvgHash(
 async function go(inFile: string, inDataFile: string, outFile: string) {
   let geojson = await readShapefile(inFile, inDataFile);
   geojson = reproject.reproject(geojson, "WGS84", "EPSG:3994", epsg);
+  geojson = simplifyGeojson(geojson);
   const svgHash = await toSvgHash(geojson);
   await outputJson(outFile, svgHash);
 }
