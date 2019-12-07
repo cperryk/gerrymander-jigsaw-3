@@ -1,22 +1,15 @@
-import { read } from "shapefile";
 import { join } from "path";
 
 import { FeatureCollection } from "geojson";
-import { outputJson } from "fs-extra";
+import { outputJson, readJsonSync } from "fs-extra";
 import xml2js from "xml2js";
 import { Conf } from "./conf";
 
 import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
-import reproject from "reproject";
-import epsg from "epsg";
 import simplifyGeojson from "./simplify";
 
 const geojsonToSvg = require("geojson-to-svg");
-
-async function readShapefile(shapeFilePath: string, dbFilePath: string) {
-  return read(shapeFilePath, dbFilePath);
-}
 
 async function extractPaths(svg: string): Promise<string[]> {
   const parsed = await xml2js.parseStringPromise(svg);
@@ -97,6 +90,7 @@ function offsetX(offset: number): projection {
 }
 
 function mirrorY(featureCollection: FeatureCollection): projection {
+  console.log(featureCollection);
   const [minX, minY, maxX, maxY] = featureCollection.bbox;
   const mirrorFnc = mirror(minY, maxY);
   return ([x, y]) => [x, mirrorFnc(y)];
@@ -134,29 +128,22 @@ async function toSvgHash(
 }
 
 async function go(conf: Conf) {
-  let geojson = await readShapefile(conf.inShapeFilePath, conf.inDataFilePath);
-  geojson = reproject.reproject(geojson, conf.inputCRS, conf.outputCRS, epsg);
+  let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
   const svgHash = await toSvgHash(geojson, conf);
+  console.log(svgHash);
   await outputJson(conf.outPath, svgHash);
 }
 
 const OUT_DIR = join(__dirname, "..", "src", "districts");
-const INPUT_DIR = join(
-  __dirname,
-  "..",
-  "..",
-  "redistricting-atlas-data",
-  "shp"
-);
+const INPUT_DIR = join(__dirname, "..", "geojsons");
+
+console.log(process.argv);
 
 const conf: Conf = {
   outPath: join(OUT_DIR, "al.json"),
-  inShapeFilePath: join(INPUT_DIR, "NY-current.shp"),
-  inDataFilePath: join(INPUT_DIR, "NY-current.dbf"),
-  inputCRS: "WGS84",
-  outputCRS: "EPSG:3994",
-  simplificationFactor: 20000000,
+  inFilePath: join(INPUT_DIR, "wv.geojson"),
+  simplificationFactor: 0.0001,
   svgStartX: 0,
   svgStartY: 0,
   svgWidth: 1000,

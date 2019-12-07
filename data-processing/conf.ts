@@ -1,9 +1,6 @@
 export interface Conf {
   outPath: string;
-  inShapeFilePath: string;
-  inDataFilePath: string;
-  inputCRS: string;
-  outputCRS: string;
+  inFilePath: string;
   simplificationFactor: number;
   svgStartX: number;
   svgStartY: number;
