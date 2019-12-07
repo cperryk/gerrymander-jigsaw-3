@@ -56,7 +56,7 @@ export class Puzzle extends React.Component<
     ));
     return (
       <div className="Puzzle">
-        <svg width="100%" height={1000} viewBox="0 0 1000 1000" ref={this.ref}>
+        <svg width="100%" height="100%" viewBox="0 0 1000 1000" ref={this.ref}>
           <PuzzleGuide
             color="#e3e3e3"
             paths={[].concat(this.state.pieces.map(piece => piece.paths))}
