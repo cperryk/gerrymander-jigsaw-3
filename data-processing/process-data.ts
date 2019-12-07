@@ -1,7 +1,7 @@
 import { join } from "path";
 
 import { FeatureCollection } from "geojson";
-import { outputJson, readJsonSync } from "fs-extra";
+import { outputJson, readJsonSync, statSync, writeFileSync } from "fs-extra";
 import xml2js from "xml2js";
 import { Conf } from "./conf";
 
@@ -131,14 +131,18 @@ async function go(conf: Conf) {
   let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
   const svgHash = await toSvgHash(geojson, conf);
-  console.log(svgHash);
-  await outputJson(conf.outPath, svgHash);
+  writeJson(conf.outPath, svgHash);
+}
+
+async function writeJson(path: string, input: any) {
+  await outputJson(conf.outPath, input);
+  const { size } = statSync(path);
+  const megabytes = size / 1000.0;
+  console.log(`written: ${path} (${megabytes} kb}`);
 }
 
 const OUT_DIR = join(__dirname, "..", "src", "districts");
 const INPUT_DIR = join(__dirname, "..", "geojsons");
-
-console.log(process.argv);
 
 const conf: Conf = {
   outPath: join(OUT_DIR, "al.json"),
