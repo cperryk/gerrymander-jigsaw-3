@@ -8,6 +8,7 @@ export class PuzzlePiece extends React.PureComponent<
     color: string;
     solved: boolean;
     dragScale: number;
+    transform: [number, number];
   },
   {
     translate: [number, number];
@@ -41,6 +42,7 @@ export class PuzzlePiece extends React.PureComponent<
           strokeLinecap="square"
           strokeMiterlimit={4}
           cursor={this.props.solved ? "normal" : "move"}
+          transform={`translate(${this.props.transform.join(",")})`}
         />
       );
     });

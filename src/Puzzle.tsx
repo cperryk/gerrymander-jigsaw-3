@@ -2,15 +2,18 @@ import React, { Ref } from "react";
 import chroma from "chroma-js";
 import { PuzzlePiece } from "./PuzzlePiece";
 import { PuzzleGuide } from "./PuzzleGuide";
+import { Piece } from "./types";
+
 export class Puzzle extends React.Component<
   {
-    pathSets: string[][];
+    pieces: Piece[];
   },
   {
     pieces: {
       key: string;
       paths: string[];
       color: string;
+      transform: [number, number];
     }[];
     solved: boolean;
     dragScale: number; // number of pixels per svg unit
@@ -24,13 +27,14 @@ export class Puzzle extends React.Component<
   constructor(props) {
     super(props);
     const colorScale = chroma
-      .scale("RdYlBu")
-      .domain([0, props.pathSets.length], props.pathSets.length, "quantiles");
+      .scale("Spectral")
+      .domain([0, props.pieces.length], props.pieces.length);
     this.state = {
-      pieces: props.pathSets.map((paths, index) => ({
+      pieces: props.pieces.map((piece, index) => ({
         key: index,
-        paths,
-        color: colorScale(index / paths.length).hex()
+        paths: piece.paths,
+        transform: piece.transform,
+        color: colorScale(index)
       })),
       solved: false,
       dragScale: 1,
@@ -41,6 +45,7 @@ export class Puzzle extends React.Component<
     this.pieceRefs = this.state.pieces.map(() => React.createRef());
   }
   render() {
+    console.log(this.state.pieces);
     const pieces = this.state.pieces.map((piece, index) => (
       <PuzzlePiece
         paths={piece.paths}
@@ -51,6 +56,7 @@ export class Puzzle extends React.Component<
         solved={this.state.solved}
         dragScale={this.state.dragScale}
         ref={this.pieceRefs[index]}
+        transform={piece.transform}
       />
     ));
     const guides = this.state.pieces.map((piece, index) => (
@@ -62,7 +68,12 @@ export class Puzzle extends React.Component<
     ));
     return (
       <div className="Puzzle">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" ref={this.ref}>
+        <svg
+          width="100%"
+          height={window.innerHeight}
+          viewBox="0 0 100 100"
+          ref={this.ref}
+        >
           {guides}
           {pieces}
         </svg>

@@ -1,32 +1,33 @@
 import React from "react";
 import "./App.css";
-import districts from "../src/districts/al.json";
+import districts from "../src/districts/la.json";
 import { Puzzle } from "./Puzzle";
+import { Piece } from "./types";
 
-function getDistricts(): DistrictData[] {
-  return Object.entries(districts).map(([key, paths]) => ({ key, paths }));
+function getPieces(): Piece[] {
+  return Object.entries(districts.paths).map(([key, paths]) => ({
+    key,
+    paths,
+    transform: districts.transforms[key] || [0, 0]
+  }));
 }
-
-type DistrictData = { paths: string[]; key: string };
 
 class App extends React.Component<
   {},
   {
-    districts: DistrictData[];
+    pieces: Piece[];
   }
 > {
   constructor(props) {
     super(props);
     this.state = {
-      districts: getDistricts()
+      pieces: getPieces()
     };
   }
   render() {
     return (
       <div className="App">
-        <Puzzle
-          pathSets={this.state.districts.map(district => district.paths)}
-        />
+        <Puzzle pieces={this.state.pieces} />
       </div>
     );
   }
