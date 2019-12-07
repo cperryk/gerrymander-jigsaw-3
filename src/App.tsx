@@ -30,6 +30,9 @@ class App extends React.Component<
       </div>
     );
   }
+  componentDidMount() {
+    document.addEventListener("touchstart", e => e.preventDefault());
+  }
 }
 
 export default App;
