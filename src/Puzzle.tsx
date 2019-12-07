@@ -14,12 +14,12 @@ export class Puzzle extends React.Component<
     }[];
     solved: boolean;
     dragScale: number; // number of pixels per svg unit
+    tolerance: number;
   }
 > {
-  solutions: {
-    [key: string]: boolean;
-  } = {};
   private ref: Ref<SVGSVGElement>;
+  private guideRefs: Ref<PuzzleGuide>[];
+  private pieceRefs: Ref<PuzzlePiece>[];
   private resizeHandler?: (...args: any[]) => any;
   constructor(props) {
     super(props);
@@ -33,13 +33,12 @@ export class Puzzle extends React.Component<
         color: colorScale(index / paths.length).hex()
       })),
       solved: false,
-      dragScale: 1
+      dragScale: 1,
+      tolerance: 30
     };
-    this.solutions = this.props.pathSets.reduce((prev, curr, index) => {
-      prev[index] = false;
-      return prev;
-    }, {});
     this.ref = React.createRef();
+    this.guideRefs = this.state.pieces.map(() => React.createRef());
+    this.pieceRefs = this.state.pieces.map(() => React.createRef());
   }
   render() {
     const pieces = this.state.pieces.map((piece, index) => (
@@ -47,19 +46,24 @@ export class Puzzle extends React.Component<
         paths={piece.paths}
         key={piece.key}
         color={piece.color}
-        tolerance={30}
         onDragStart={() => this.handleDrag(index)}
-        onDragStop={isSolved => this.handleDragStop(piece.key, isSolved)}
+        onDragStop={() => this.handleDragStop()}
         solved={this.state.solved}
         dragScale={this.state.dragScale}
+        ref={this.pieceRefs[index]}
+      />
+    ));
+    const guides = this.state.pieces.map((piece, index) => (
+      <PuzzleGuide
+        paths={piece.paths}
+        ref={this.guideRefs[index]}
+        key={index}
       />
     ));
     return (
       <div className="Puzzle">
         <svg width="100%" height="100%" viewBox="0 0 1000 1000" ref={this.ref}>
-          <PuzzleGuide
-            paths={[].concat(this.state.pieces.map(piece => piece.paths))}
-          />
+          {guides}
           {pieces}
         </svg>
       </div>
@@ -94,17 +98,38 @@ export class Puzzle extends React.Component<
   handleDrag(index: number) {
     this.movePieceToFront(index);
   }
-  handleDragStop(key: string, isSolved: boolean) {
-    this.solutions[key] = isSolved;
-    console.log(this.solutions);
+  isPieceSolved(index: number): boolean {
+    const guideRef = this.guideRefs[index];
+    const pieceRef = this.pieceRefs[index];
+    const { tolerance } = this.state;
+    if (!(typeof pieceRef === "object" && typeof guideRef === "object")) {
+      return false;
+    }
+    const pieceBbox = pieceRef.current.getBbox();
+    const guideBbox = guideRef.current.getBbox();
+    const solutionBounds = {
+      x1: guideBbox.left - tolerance,
+      x2: guideBbox.left + tolerance,
+      y1: guideBbox.top - tolerance,
+      y2: guideBbox.top + tolerance
+    };
+    const { left: x, top: y } = pieceBbox;
+    const out =
+      x > solutionBounds.x1 &&
+      x < solutionBounds.x2 &&
+      y > solutionBounds.y1 &&
+      y < solutionBounds.y2;
+    return out;
+  }
+  isAllSolved() {
+    return this.state.pieces.every((piece, index) => this.isPieceSolved(index));
+  }
+  handleDragStop() {
     if (this.isAllSolved()) {
-      window.alert("solved!");
       this.setState({
         solved: true
       });
+      window.alert("solved!");
     }
-  }
-  isAllSolved(): boolean {
-    return Object.values(this.solutions).every(val => val === true);
   }
 }

@@ -1,13 +1,11 @@
 import React, { Ref } from "react";
 import Draggable from "react-draggable";
-import { PuzzleGuide } from "./PuzzleGuide";
 export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
     onDragStart: () => any;
-    onDragStop: (isSolved: boolean) => any;
+    onDragStop: () => any;
     color: string;
-    tolerance: number;
     solved: boolean;
     dragScale: number;
   },
@@ -20,7 +18,6 @@ export class PuzzlePiece extends React.PureComponent<
   }
 > {
   private ref: Ref<SVGGElement>;
-  private guideRef: Ref<PuzzleGuide>;
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +28,6 @@ export class PuzzlePiece extends React.PureComponent<
       dragging: false
     };
     this.ref = React.createRef();
-    this.guideRef = React.createRef();
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -49,23 +45,20 @@ export class PuzzlePiece extends React.PureComponent<
       );
     });
     return (
-      <g>
-        <PuzzleGuide paths={this.props.paths} ref={this.guideRef} />
-        <Draggable
-          scale={this.props.dragScale}
-          onStart={this.handleDragStart.bind(this)}
-          onStop={this.handleDragStop.bind(this)}
-          disabled={this.props.solved}
+      <Draggable
+        scale={this.props.dragScale}
+        onStart={this.handleDragStart.bind(this)}
+        onStop={this.handleDragStop.bind(this)}
+        disabled={this.props.solved}
+      >
+        <g
+          onMouseOver={this.handleMouseOver.bind(this)}
+          onMouseOut={this.handleMouseOut.bind(this)}
+          ref={this.ref}
         >
-          <g
-            onMouseOver={this.handleMouseOver.bind(this)}
-            onMouseOut={this.handleMouseOut.bind(this)}
-            ref={this.ref}
-          >
-            {pathEls}
-          </g>
-        </Draggable>
-      </g>
+          {pathEls}
+        </g>
+      </Draggable>
     );
   }
   getBbox(): ClientRect | null {
@@ -103,26 +96,6 @@ export class PuzzlePiece extends React.PureComponent<
       dragging: false,
       color: this.props.color
     });
-    this.props.onDragStop(this.isSolved());
-  }
-  isSolved(): boolean {
-    if (typeof this.guideRef !== "object") return false;
-    const pieceBbox = this.getBbox();
-    const guideBbox = this.guideRef.current.getBbox();
-    const solutionBounds = {
-      x1: guideBbox.left - this.props.tolerance,
-      x2: guideBbox.left + this.props.tolerance,
-      y1: guideBbox.top - this.props.tolerance,
-      y2: guideBbox.top + this.props.tolerance
-    };
-    const { left: x, top: y } = pieceBbox;
-    console.log(guideBbox, pieceBbox, solutionBounds);
-    const out =
-      x > solutionBounds.x1 &&
-      x < solutionBounds.x2 &&
-      y > solutionBounds.y1 &&
-      y < solutionBounds.y2;
-    console.log(out);
-    return out;
+    this.props.onDragStop();
   }
 }
