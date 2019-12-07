@@ -19,7 +19,8 @@ export class Puzzle extends React.Component<
   solutions: {
     [key: string]: boolean;
   } = {};
-  private ref: Ref<HTMLDivElement>;
+  private ref: Ref<SVGSVGElement>;
+  private resizeHandler?: (...args: any[]) => any;
   constructor(props) {
     super(props);
     const colorScale = chroma
@@ -54,8 +55,8 @@ export class Puzzle extends React.Component<
       />
     ));
     return (
-      <div className="Puzzle" ref={this.ref}>
-        <svg width="100%" height={1000} viewBox="0 0 1000 1000">
+      <div className="Puzzle">
+        <svg width="100%" height={1000} viewBox="0 0 1000 1000" ref={this.ref}>
           <PuzzleGuide
             color="#e3e3e3"
             paths={[].concat(this.state.pieces.map(piece => piece.paths))}
@@ -67,12 +68,19 @@ export class Puzzle extends React.Component<
   }
   componentDidMount() {
     this.refreshDragScale();
+    this.resizeHandler = this.refreshDragScale.bind(this);
+    window.addEventListener("resize", this.resizeHandler);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeHandler);
   }
   refreshDragScale() {
     if (typeof this.ref === "object") {
-      const { width } = this.ref.current.getBoundingClientRect();
+      console.log(this.ref);
+      const { width, height } = this.ref.current.getBoundingClientRect();
+      console.log("refreshing drag scale", width, width / 1000);
       this.setState({
-        dragScale: width / 1000
+        dragScale: Math.min(width, height) / 1000
       });
     }
   }
