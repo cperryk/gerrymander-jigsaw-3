@@ -4,6 +4,7 @@ import { FeatureCollection } from "geojson";
 import { outputJson, readJsonSync, statSync, writeFileSync } from "fs-extra";
 import xml2js from "xml2js";
 import { Conf } from "./conf";
+import minimist from "minimist";
 
 import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
@@ -128,6 +129,7 @@ async function toSvgHash(
 }
 
 async function go(conf: Conf) {
+  console.log(conf);
   let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
   const svgHash = await toSvgHash(geojson, conf);
@@ -144,6 +146,8 @@ async function writeJson(path: string, input: any) {
 const OUT_DIR = join(__dirname, "..", "src", "districts");
 const INPUT_DIR = join(__dirname, "..", "geojsons");
 
+const { _, ...argv } = minimist(process.argv);
+
 const conf: Conf = {
   outPath: join(OUT_DIR, "al.json"),
   inFilePath: join(INPUT_DIR, "wv.geojson"),
@@ -152,7 +156,8 @@ const conf: Conf = {
   svgStartY: 0,
   svgWidth: 1000,
   svgHeight: 1000,
-  svgGutter: 100
+  svgGutter: 100,
+  ...argv
 };
 
 go(conf).catch(err => {
