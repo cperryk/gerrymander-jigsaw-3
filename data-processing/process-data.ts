@@ -162,7 +162,7 @@ const conf: Conf = {
   svgStartY: 0,
   svgWidth: 100,
   svgHeight: 100,
-  svgGutter: 10,
+  svgGutter: 20,
   ...argv
 };
 

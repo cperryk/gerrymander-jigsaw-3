@@ -14,6 +14,8 @@ export class Puzzle extends React.Component<
       paths: string[];
       color: string;
       transform: [number, number];
+      guideRef: Ref<PuzzleGuide>;
+      pieceRef: Ref<PuzzlePiece>;
     }[];
     solved: boolean;
     dragScale: number; // number of pixels per svg unit
@@ -21,8 +23,6 @@ export class Puzzle extends React.Component<
   }
 > {
   private ref: Ref<SVGSVGElement>;
-  private guideRefs: Ref<PuzzleGuide>[];
-  private pieceRefs: Ref<PuzzlePiece>[];
   private resizeHandler?: (...args: any[]) => any;
   constructor(props) {
     super(props);
@@ -31,21 +31,20 @@ export class Puzzle extends React.Component<
       .domain([0, props.pieces.length], props.pieces.length);
     this.state = {
       pieces: props.pieces.map((piece, index) => ({
-        key: index,
+        key: piece.key,
         paths: piece.paths,
         transform: piece.transform,
-        color: colorScale(index)
+        color: colorScale(index),
+        guideRef: React.createRef(),
+        pieceRef: React.createRef()
       })),
       solved: false,
       dragScale: 1,
       tolerance: 30
     };
     this.ref = React.createRef();
-    this.guideRefs = this.state.pieces.map(() => React.createRef());
-    this.pieceRefs = this.state.pieces.map(() => React.createRef());
   }
   render() {
-    console.log(this.state.pieces);
     const pieces = this.state.pieces.map((piece, index) => (
       <PuzzlePiece
         paths={piece.paths}
@@ -55,16 +54,12 @@ export class Puzzle extends React.Component<
         onDragStop={() => this.handleDragStop()}
         solved={this.state.solved}
         dragScale={this.state.dragScale}
-        ref={this.pieceRefs[index]}
+        ref={piece.pieceRef}
         transform={piece.transform}
       />
     ));
     const guides = this.state.pieces.map((piece, index) => (
-      <PuzzleGuide
-        paths={piece.paths}
-        ref={this.guideRefs[index]}
-        key={index}
-      />
+      <PuzzleGuide paths={piece.paths} ref={piece.guideRef} key={index} />
     ));
     return (
       <div className="Puzzle">
@@ -113,8 +108,7 @@ export class Puzzle extends React.Component<
     this.movePieceToFront(index);
   }
   isPieceSolved(index: number): boolean {
-    const guideRef = this.guideRefs[index];
-    const pieceRef = this.pieceRefs[index];
+    const { guideRef, pieceRef } = this.state.pieces[index];
     const { tolerance } = this.state;
     if (!(typeof pieceRef === "object" && typeof guideRef === "object")) {
       return false;
@@ -145,5 +139,22 @@ export class Puzzle extends React.Component<
       });
       window.alert("solved!");
     }
+    this.logPositions();
+  }
+  // for development
+  logPositions() {
+    const positions = this.state.pieces.reduce((prev, curr) => {
+      const { pieceRef, guideRef } = curr;
+      if (typeof pieceRef === "object" && typeof guideRef === "object") {
+        const guideBbox = guideRef.current.getBbox();
+        const pieceBbox = pieceRef.current.getBbox();
+        prev[curr.key] = [
+          Math.trunc(pieceBbox.left - guideBbox.left),
+          Math.trunc(pieceBbox.top - guideBbox.top)
+        ];
+      }
+      return prev;
+    }, {});
+    console.log(JSON.stringify(positions));
   }
 }
