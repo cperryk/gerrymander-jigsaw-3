@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "dec6b36c9769f57383f2243ed6aa6acc",
+    "revision": "3072e1560ac18c8342738ca6cbd057ea",
     "url": "/gerrymander-jigsaw-3/build/index.html"
   },
   {
-    "revision": "7ee74179f8640bacf80f",
+    "revision": "b6d79aa569082775e08f",
     "url": "/gerrymander-jigsaw-3/build/static/css/main.b1f99c5b.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/gerrymander-jigsaw-3/build/static/js/2.10a008a3.chunk.js"
   },
   {
-    "revision": "7ee74179f8640bacf80f",
-    "url": "/gerrymander-jigsaw-3/build/static/js/main.36593107.chunk.js"
+    "revision": "b6d79aa569082775e08f",
+    "url": "/gerrymander-jigsaw-3/build/static/js/main.a249faf1.chunk.js"
   },
   {
     "revision": "694f349c6befcae0a17f",
