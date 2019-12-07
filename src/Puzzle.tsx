@@ -73,6 +73,9 @@ export class Puzzle extends React.Component<
     this.refreshDragScale();
     this.resizeHandler = this.refreshDragScale.bind(this);
     window.addEventListener("resize", this.resizeHandler);
+    window.document.addEventListener("touchforcechange", e => {
+      e.preventDefault();
+    });
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeHandler);
