@@ -62,7 +62,7 @@ export class Puzzle extends React.Component<
     ));
     return (
       <div className="Puzzle">
-        <svg width="100%" height="100%" viewBox="0 0 1000 1000" ref={this.ref}>
+        <svg width="100%" height="100%" viewBox="0 0 100 100" ref={this.ref}>
           {guides}
           {pieces}
         </svg>
@@ -84,7 +84,7 @@ export class Puzzle extends React.Component<
     if (typeof this.ref === "object") {
       const { width, height } = this.ref.current.getBoundingClientRect();
       this.setState({
-        dragScale: Math.min(width, height) / 1000
+        dragScale: Math.min(width, height) / 100
       });
     }
   }

@@ -154,9 +154,9 @@ const conf: Conf = {
   simplificationFactor: 0.0001,
   svgStartX: 0,
   svgStartY: 0,
-  svgWidth: 1000,
-  svgHeight: 1000,
-  svgGutter: 100,
+  svgWidth: 100,
+  svgHeight: 100,
+  svgGutter: 10,
   ...argv
 };
 

@@ -35,7 +35,7 @@ export class PuzzlePiece extends React.PureComponent<
         <path
           d={path}
           stroke="gray"
-          strokeWidth={0.2}
+          strokeWidth={0.05}
           fill={this.state.color}
           key={index}
           strokeLinecap="square"
