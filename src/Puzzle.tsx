@@ -76,9 +76,7 @@ export class Puzzle extends React.Component<
   }
   refreshDragScale() {
     if (typeof this.ref === "object") {
-      console.log(this.ref);
       const { width, height } = this.ref.current.getBoundingClientRect();
-      console.log("refreshing drag scale", width, width / 1000);
       this.setState({
         dragScale: Math.min(width, height) / 1000
       });
