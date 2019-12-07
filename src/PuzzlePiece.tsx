@@ -8,6 +8,7 @@ export class PuzzlePiece extends React.PureComponent<
     color: string;
     tolerance: number;
     solved: boolean;
+    dragScale: number;
   },
   {
     translate: [number, number];
@@ -56,7 +57,7 @@ export class PuzzlePiece extends React.PureComponent<
     });
     return (
       <Draggable
-        scale={1}
+        scale={this.props.dragScale}
         onStart={this.handleDragStart.bind(this)}
         onStop={this.handleDragStop.bind(this)}
         disabled={this.props.solved}

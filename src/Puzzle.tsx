@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Ref } from "react";
 import chroma from "chroma-js";
 import { PuzzlePiece } from "./PuzzlePiece";
 import { PuzzleGuide } from "./PuzzleGuide";
@@ -13,11 +13,13 @@ export class Puzzle extends React.Component<
       color: string;
     }[];
     solved: boolean;
+    dragScale: number; // number of pixels per svg unit
   }
 > {
   solutions: {
     [key: string]: boolean;
   } = {};
+  private ref: Ref<HTMLDivElement>;
   constructor(props) {
     super(props);
     const colorScale = chroma
@@ -29,12 +31,14 @@ export class Puzzle extends React.Component<
         paths,
         color: colorScale(index / paths.length).hex()
       })),
-      solved: false
+      solved: false,
+      dragScale: 1
     };
     this.solutions = this.props.pathSets.reduce((prev, curr, index) => {
       prev[index] = false;
       return prev;
     }, {});
+    this.ref = React.createRef();
   }
   render() {
     const pieces = this.state.pieces.map((piece, index) => (
@@ -46,11 +50,12 @@ export class Puzzle extends React.Component<
         onDragStart={() => this.handleDrag(index)}
         onDragStop={isSolved => this.handleDragStop(piece.key, isSolved)}
         solved={this.state.solved}
+        dragScale={this.state.dragScale}
       />
     ));
     return (
-      <div className="Puzzle">
-        <svg width={1000} height={1000} viewBox="0 0 1000 1000">
+      <div className="Puzzle" ref={this.ref}>
+        <svg width="100%" height={1000} viewBox="0 0 1000 1000">
           <PuzzleGuide
             color="#e3e3e3"
             paths={[].concat(this.state.pieces.map(piece => piece.paths))}
@@ -59,6 +64,17 @@ export class Puzzle extends React.Component<
         </svg>
       </div>
     );
+  }
+  componentDidMount() {
+    this.refreshDragScale();
+  }
+  refreshDragScale() {
+    if (typeof this.ref === "object") {
+      const { width } = this.ref.current.getBoundingClientRect();
+      this.setState({
+        dragScale: width / 1000
+      });
+    }
   }
   movePieceToFront(index: number) {
     if (index === this.state.pieces.length - 1) return;
