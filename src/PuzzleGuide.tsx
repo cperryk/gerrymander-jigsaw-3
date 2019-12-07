@@ -1,10 +1,11 @@
-import React from "react";
+import React, { Ref } from "react";
 export class PuzzleGuide extends React.Component<{
   paths: string[];
-  color: string;
 }> {
+  public ref: Ref<SVGGElement>;
   constructor(props) {
     super(props);
+    this.ref = React.createRef();
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -13,11 +14,17 @@ export class PuzzleGuide extends React.Component<{
           d={path}
           stroke="{this.props.color}"
           strokeWidth={0.5}
-          fill={this.props.color}
+          fill="#e3e3e3"
           key={index}
         />
       );
     });
-    return <g>{pathEls}</g>;
+    return <g ref={this.ref}>{pathEls}</g>;
+  }
+  getBbox(): ClientRect | null {
+    const ref = this.ref;
+    if (typeof ref === "object" && ref && ref.current) {
+      return ref.current.getBoundingClientRect();
+    }
   }
 }

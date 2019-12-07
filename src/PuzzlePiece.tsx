@@ -1,5 +1,6 @@
 import React, { Ref } from "react";
 import Draggable from "react-draggable";
+import { PuzzleGuide } from "./PuzzleGuide";
 export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
@@ -18,17 +19,8 @@ export class PuzzlePiece extends React.PureComponent<
     dragging: boolean;
   }
 > {
-  private myRef: Ref<SVGGElement>;
-  private originalPosition: {
-    x: number;
-    y: number;
-  };
-  private solutionBounds: {
-    x1: number;
-    x2: number;
-    y1: number;
-    y2: number;
-  };
+  private ref: Ref<SVGGElement>;
+  private guideRef: Ref<PuzzleGuide>;
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +30,8 @@ export class PuzzlePiece extends React.PureComponent<
       color: this.props.color,
       dragging: false
     };
-    this.myRef = React.createRef();
+    this.ref = React.createRef();
+    this.guideRef = React.createRef();
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -56,45 +49,34 @@ export class PuzzlePiece extends React.PureComponent<
       );
     });
     return (
-      <Draggable
-        scale={this.props.dragScale}
-        onStart={this.handleDragStart.bind(this)}
-        onStop={this.handleDragStop.bind(this)}
-        disabled={this.props.solved}
-      >
-        <g
-          onMouseOver={this.handleMouseOver.bind(this)}
-          onMouseOut={this.handleMouseOut.bind(this)}
-          ref={this.myRef}
+      <g>
+        <PuzzleGuide paths={this.props.paths} ref={this.guideRef} />
+        <Draggable
+          scale={this.props.dragScale}
+          onStart={this.handleDragStart.bind(this)}
+          onStop={this.handleDragStop.bind(this)}
+          disabled={this.props.solved}
         >
-          {pathEls}
-        </g>
-      </Draggable>
+          <g
+            onMouseOver={this.handleMouseOver.bind(this)}
+            onMouseOut={this.handleMouseOut.bind(this)}
+            ref={this.ref}
+          >
+            {pathEls}
+          </g>
+        </Draggable>
+      </g>
     );
   }
-  getPosition(): {
-    x: number;
-    y: number;
-  } | null {
-    if (typeof this.myRef === "object" && this.myRef && this.myRef.current) {
-      const rect = this.myRef.current.getBoundingClientRect();
-      return { x: rect.left - window.scrollX, y: rect.top - window.scrollY };
-    }
-  }
-  componentDidMount() {
-    if (typeof this.myRef === "object" && this.myRef && this.myRef.current) {
-      this.originalPosition = this.getPosition();
-      this.solutionBounds = {
-        x1: this.originalPosition.x - this.props.tolerance,
-        x2: this.originalPosition.x + this.props.tolerance,
-        y1: this.originalPosition.y - this.props.tolerance,
-        y2: this.originalPosition.y + this.props.tolerance
-      };
+  getBbox(): ClientRect | null {
+    const ref = this.ref;
+    if (typeof ref === "object" && ref && ref.current) {
+      return ref.current.getBoundingClientRect();
     }
   }
   componentDidUpdate() {
-    if (this.props.solved && typeof this.myRef === "object") {
-      this.myRef.current.setAttribute("transform", "");
+    if (this.props.solved && typeof this.ref === "object") {
+      this.ref.current.setAttribute("transform", "");
     }
   }
   handleMouseOver() {
@@ -124,12 +106,23 @@ export class PuzzlePiece extends React.PureComponent<
     this.props.onDragStop(this.isSolved());
   }
   isSolved(): boolean {
-    const { x, y } = this.getPosition();
-    return (
-      x > this.solutionBounds.x1 &&
-      x < this.solutionBounds.x2 &&
-      y > this.solutionBounds.y1 &&
-      y < this.solutionBounds.y2
-    );
+    if (typeof this.guideRef !== "object") return false;
+    const pieceBbox = this.getBbox();
+    const guideBbox = this.guideRef.current.getBbox();
+    const solutionBounds = {
+      x1: guideBbox.left - this.props.tolerance,
+      x2: guideBbox.left + this.props.tolerance,
+      y1: guideBbox.top - this.props.tolerance,
+      y2: guideBbox.top + this.props.tolerance
+    };
+    const { left: x, top: y } = pieceBbox;
+    console.log(guideBbox, pieceBbox, solutionBounds);
+    const out =
+      x > solutionBounds.x1 &&
+      x < solutionBounds.x2 &&
+      y > solutionBounds.y1 &&
+      y < solutionBounds.y2;
+    console.log(out);
+    return out;
   }
 }
