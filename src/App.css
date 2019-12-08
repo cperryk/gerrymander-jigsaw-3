@@ -1,3 +1,8 @@
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none; /* prevents long touch */
+}
+
 .App {
   text-align: center;
   touch-action: none;

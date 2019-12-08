@@ -35,7 +35,10 @@ class App extends React.Component<
     );
   }
   componentDidMount() {
-    document.addEventListener("touchstart", e => e.preventDefault());
+    document.addEventListener("touchstart", e => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
   }
 }
 
