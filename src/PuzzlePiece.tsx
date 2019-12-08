@@ -1,5 +1,5 @@
 import React, { Ref } from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData } from "react-draggable";
 export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
@@ -16,9 +16,10 @@ export class PuzzlePiece extends React.PureComponent<
     hoverColor: string;
     dragColor: string;
     dragging: boolean;
+    lastPosition?: [number, number];
   }
 > {
-  private ref: Ref<SVGGElement>;
+  public ref: Ref<SVGGElement>;
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +27,8 @@ export class PuzzlePiece extends React.PureComponent<
       dragColor: "yellow",
       hoverColor: "rgb(100%, 100%, 44.1%)",
       color: this.props.color,
-      dragging: false
+      dragging: false,
+      lastPosition: this.props.transform
     };
     this.ref = React.createRef();
   }
@@ -42,7 +44,6 @@ export class PuzzlePiece extends React.PureComponent<
           strokeLinecap="square"
           strokeMiterlimit={4}
           cursor={this.props.solved ? "normal" : "move"}
-          transform={`translate(${this.props.transform.join(",")})`}
         />
       );
     });
@@ -52,6 +53,10 @@ export class PuzzlePiece extends React.PureComponent<
         onStart={this.handleDragStart.bind(this)}
         onStop={this.handleDragStop.bind(this)}
         disabled={this.props.solved}
+        defaultPosition={{
+          x: this.props.transform[0],
+          y: this.props.transform[1]
+        }}
       >
         <g
           onMouseOver={this.handleMouseOver.bind(this)}
@@ -67,11 +72,6 @@ export class PuzzlePiece extends React.PureComponent<
     const ref = this.ref;
     if (typeof ref === "object" && ref && ref.current) {
       return ref.current.getBoundingClientRect();
-    }
-  }
-  componentDidUpdate() {
-    if (this.props.solved && typeof this.ref === "object") {
-      this.ref.current.setAttribute("transform", "");
     }
   }
   handleMouseOver() {
@@ -93,11 +93,15 @@ export class PuzzlePiece extends React.PureComponent<
     });
     this.props.onDragStart();
   }
-  handleDragStop() {
+  handleDragStop(e: MouseEvent, data: DraggableData) {
     this.setState({
       dragging: false,
-      color: this.props.color
+      color: this.props.color,
+      lastPosition: [data.x, data.y]
     });
     this.props.onDragStop();
+  }
+  getPosition(): [number, number] | null {
+    return this.state.lastPosition;
   }
 }

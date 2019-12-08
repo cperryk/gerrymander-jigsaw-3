@@ -144,14 +144,16 @@ export class Puzzle extends React.Component<
   // for development
   logPositions() {
     const positions = this.state.pieces.reduce((prev, curr) => {
-      const { pieceRef, guideRef } = curr;
-      if (typeof pieceRef === "object" && typeof guideRef === "object") {
-        const guideBbox = guideRef.current.getBbox();
-        const pieceBbox = pieceRef.current.getBbox();
-        prev[curr.key] = [
-          Math.trunc(pieceBbox.left - guideBbox.left),
-          Math.trunc(pieceBbox.top - guideBbox.top)
-        ];
+      const { pieceRef } = curr;
+      if (
+        typeof pieceRef === "object" &&
+        typeof pieceRef.current.ref === "object"
+      ) {
+        const position = pieceRef.current.getPosition();
+        if (position) {
+          const [x, y] = position;
+          prev[curr.key] = [x.toFixed(1), y.toFixed(1)];
+        }
       }
       return prev;
     }, {});

@@ -5,11 +5,14 @@ import { Puzzle } from "./Puzzle";
 import { Piece } from "./types";
 
 function getPieces(): Piece[] {
-  return Object.entries(districts.paths).map(([key, paths]) => ({
-    key,
-    paths,
-    transform: districts.transforms[key] || [0, 0]
-  }));
+  return Object.entries(districts.paths).map(([key, paths]) => {
+    const [x, y] = districts.transforms[key] || ["0", "0"];
+    return {
+      key,
+      paths,
+      transform: [parseFloat(x), parseFloat(y)]
+    };
+  });
 }
 
 class App extends React.Component<
