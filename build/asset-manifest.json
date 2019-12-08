@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.b1f99c5b.chunk.css",
-    "main.js": "/gerrymander-jigsaw-3/build/static/js/main.00760de5.chunk.js",
-    "main.js.map": "/gerrymander-jigsaw-3/build/static/js/main.00760de5.chunk.js.map",
+    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.b3711633.chunk.css",
+    "main.js": "/gerrymander-jigsaw-3/build/static/js/main.ba8eec72.chunk.js",
+    "main.js.map": "/gerrymander-jigsaw-3/build/static/js/main.ba8eec72.chunk.js.map",
     "runtime-main.js": "/gerrymander-jigsaw-3/build/static/js/runtime-main.6623e039.js",
     "runtime-main.js.map": "/gerrymander-jigsaw-3/build/static/js/runtime-main.6623e039.js.map",
-    "static/js/2.10a008a3.chunk.js": "/gerrymander-jigsaw-3/build/static/js/2.10a008a3.chunk.js",
-    "static/js/2.10a008a3.chunk.js.map": "/gerrymander-jigsaw-3/build/static/js/2.10a008a3.chunk.js.map",
+    "static/js/2.278c0f62.chunk.js": "/gerrymander-jigsaw-3/build/static/js/2.278c0f62.chunk.js",
+    "static/js/2.278c0f62.chunk.js.map": "/gerrymander-jigsaw-3/build/static/js/2.278c0f62.chunk.js.map",
     "index.html": "/gerrymander-jigsaw-3/build/index.html",
-    "precache-manifest.8c76940a6f19c264e40d42c70583e061.js": "/gerrymander-jigsaw-3/build/precache-manifest.8c76940a6f19c264e40d42c70583e061.js",
+    "precache-manifest.4d1c3fa51b43d9f526f95c02e0c4ec46.js": "/gerrymander-jigsaw-3/build/precache-manifest.4d1c3fa51b43d9f526f95c02e0c4ec46.js",
     "service-worker.js": "/gerrymander-jigsaw-3/build/service-worker.js",
-    "static/css/main.b1f99c5b.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.b1f99c5b.chunk.css.map"
+    "static/css/main.b3711633.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.b3711633.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.6623e039.js",
-    "static/js/2.10a008a3.chunk.js",
-    "static/css/main.b1f99c5b.chunk.css",
-    "static/js/main.00760de5.chunk.js"
+    "static/js/2.278c0f62.chunk.js",
+    "static/css/main.b3711633.chunk.css",
+    "static/js/main.ba8eec72.chunk.js"
   ]
 }
