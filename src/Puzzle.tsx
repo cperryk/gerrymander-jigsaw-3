@@ -64,7 +64,7 @@ export class Puzzle extends React.Component<
     return (
       <div className="Puzzle">
         <svg
-          width="100%"
+          width={window.innerWidth}
           height={window.innerHeight}
           viewBox="0 0 100 100"
           ref={this.ref}
@@ -87,12 +87,9 @@ export class Puzzle extends React.Component<
     window.removeEventListener("resize", this.resizeHandler);
   }
   refreshDragScale() {
-    if (typeof this.ref === "object") {
-      const { width, height } = this.ref.current.getBoundingClientRect();
-      this.setState({
-        dragScale: Math.min(width, height) / 100
-      });
-    }
+    this.setState({
+      dragScale: Math.min(window.innerWidth, window.innerHeight) / 100
+    });
   }
   movePieceToFront(index: number) {
     if (index === this.state.pieces.length - 1) return;
