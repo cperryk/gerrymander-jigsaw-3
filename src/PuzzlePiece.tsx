@@ -86,6 +86,11 @@ export class PuzzlePiece extends React.PureComponent<
       color: this.props.color
     });
   }
+  componentDidUpdate() {
+    if (this.props.solved && typeof this.ref === "object") {
+      this.ref.current.setAttribute("transform", "");
+    }
+  }
   handleDragStart() {
     this.setState({
       dragging: true,
