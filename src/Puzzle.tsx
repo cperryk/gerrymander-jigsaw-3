@@ -8,6 +8,7 @@ export class Puzzle extends React.Component<
   {
     pieces: Piece[];
     viewBox: [number, number, number, number];
+    devMode?: boolean;
   },
   {
     pieces: {
@@ -138,6 +139,7 @@ export class Puzzle extends React.Component<
   }
   // for development
   logPositions() {
+    if (!this.props.devMode) return;
     const positions = this.state.pieces.reduce((prev, curr) => {
       const { pieceRef } = curr;
       if (
