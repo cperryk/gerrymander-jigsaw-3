@@ -88,11 +88,15 @@ export class Puzzle extends React.Component<
   }
   componentDidMount() {
     this.refreshDragScale();
-    this.resizeHandler = this.refreshDragScale.bind(this);
+    this.resizeHandler = this.handleResize.bind(this);
     window.addEventListener("resize", this.resizeHandler);
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeHandler);
+  }
+  handleResize() {
+    this.forceUpdate(); // re-render first b/c to compute drag scale we need to render new dimensions
+    this.refreshDragScale();
   }
   refreshDragScale() {
     if (typeof this.ref !== "object") return;
@@ -104,7 +108,6 @@ export class Puzzle extends React.Component<
     const pixelsPerCoord = heightLimited
       ? svgBbox.height / this.props.viewBox[3]
       : svgBbox.width / this.props.viewBox[2];
-
     this.setState({
       dragScale: pixelsPerCoord
     });
