@@ -63,6 +63,14 @@ export class Puzzle extends React.Component<
     const guides = this.state.pieces.map((piece, index) => (
       <PuzzleGuide paths={piece.paths} ref={piece.guideRef} key={index} />
     ));
+    const bboxGuide = this.props.devMode ? (
+      <rect
+        x={this.props.viewBox[0]}
+        y={this.props.viewBox[1]}
+        width={this.props.viewBox[2]}
+        height={this.props.viewBox[3]}
+      ></rect>
+    ) : null;
     return (
       <div className="Puzzle">
         <svg
@@ -71,6 +79,7 @@ export class Puzzle extends React.Component<
           viewBox={this.props.viewBox.join(" ")}
           ref={this.ref}
         >
+          {bboxGuide}
           {guides}
           {pieces}
         </svg>
@@ -86,8 +95,18 @@ export class Puzzle extends React.Component<
     window.removeEventListener("resize", this.resizeHandler);
   }
   refreshDragScale() {
+    if (typeof this.ref !== "object") return;
+    const { viewBox } = this.props;
+    const svgBbox = this.ref.current.getBoundingClientRect();
+    const viewPortAspectRatio = svgBbox.width / svgBbox.height;
+    const viewBoxAspectRatio = viewBox[2] / viewBox[3];
+    const heightLimited = viewPortAspectRatio > viewBoxAspectRatio;
+    const pixelsPerCoord = heightLimited
+      ? svgBbox.height / this.props.viewBox[3]
+      : svgBbox.width / this.props.viewBox[2];
+
     this.setState({
-      dragScale: Math.min(window.innerWidth, window.innerHeight) / 100
+      dragScale: pixelsPerCoord
     });
   }
   movePieceToFront(index: number) {
