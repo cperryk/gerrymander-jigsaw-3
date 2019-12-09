@@ -28,12 +28,13 @@ class App extends React.Component<
     };
   }
   render() {
+    const viewBox = districts.viewBox;
     return (
       <div className="App">
         <Puzzle
           pieces={this.state.pieces}
-          viewBox={[0, 0, 100, 150]}
-          devMode={true}
+          viewBox={[viewBox.minX, viewBox.minY, viewBox.width, viewBox.height]}
+          devMode={false}
         />
       </div>
     );

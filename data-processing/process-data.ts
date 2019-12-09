@@ -69,35 +69,23 @@ function fitPuzzleBounds(
 
   const xScale = scaleLinear()
     .domain([minX, minX + mapRange])
-    .range([
-      conf.svgStartX + conf.svgHorizontalGutter,
-      conf.svgWidth - conf.svgHorizontalGutter
-    ]);
+    .range([conf.svgStartX, conf.svgWidth]);
 
   const yScale = scaleLinear()
     .domain([minY, minY + mapRange])
-    .range([
-      conf.svgStartY + conf.svgVerticalGutter,
-      conf.svgHeight - conf.svgVerticalGutter
-    ]);
+    .range([conf.svgStartY, conf.svgHeight]);
 
-  const horizontalCenteringOffset =
-    (conf.svgWidth -
-      conf.svgHorizontalGutter * 2 -
-      (xScale(maxX) - xScale(minX))) /
-    2;
+  return applyProjections(simplifyCoords());
+}
 
-  const verticalCenteringOffset =
-    (conf.svgHeight -
-      conf.svgVerticalGutter * 2 -
-      (yScale(maxY) - yScale(minY))) /
-    2;
+function simplifyNumber(n: number) {
+  return Math.trunc(n * 100);
+}
 
-  return applyProjections(
-    scalePosition(xScale, yScale),
-    offsetX(horizontalCenteringOffset),
-    offsetY(verticalCenteringOffset)
-  );
+function simplifyCoords(): projection {
+  return ([x, y]) => {
+    return [simplifyNumber(x), simplifyNumber(y)];
+  };
 }
 
 function offsetX(offset: number): projection {
@@ -113,7 +101,6 @@ function offsetY(offset: number): projection {
 }
 
 function mirrorY(featureCollection: FeatureCollection): projection {
-  console.log(featureCollection);
   const [minX, minY, maxX, maxY] = featureCollection.bbox;
   const mirrorFnc = mirror(minY, maxY);
   return ([x, y]) => [x, mirrorFnc(y)];
@@ -150,17 +137,33 @@ async function toSvgHash(
   return prev;
 }
 
+function geoJsonViewBoxToSvgViewBox(
+  [minX, minY, maxX, maxY]: [number, number, number, number],
+  conf: Conf
+) {
+  const height = maxY - minY;
+  const verticalPaddingAbsolute = height * conf.verticalPadding;
+  return {
+    minX: simplifyNumber(minX),
+    minY: simplifyNumber(minY) - simplifyNumber(verticalPaddingAbsolute),
+    width: simplifyNumber(maxX - minX),
+    height: simplifyNumber(height + verticalPaddingAbsolute * 2)
+  };
+}
+
 async function go(conf: Conf) {
   let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
   const svgHash = {
     paths: await toSvgHash(geojson, conf),
-    transforms: {}
+    transforms: {},
+    viewBox: geoJsonViewBoxToSvgViewBox(geojson.bbox, conf)
   };
   if (existsSync(conf.outPath)) {
     const { transforms } = readJsonSync(conf.outPath);
     svgHash.transforms = transforms;
   }
+  console.log(svgHash);
   writeJson(conf.outPath, svgHash);
 }
 
@@ -183,9 +186,8 @@ const conf: Conf = {
   svgStartX: 0,
   svgStartY: 0,
   svgWidth: 100,
-  svgHeight: 140,
-  svgHorizontalGutter: 0,
-  svgVerticalGutter: 20,
+  svgHeight: 200,
+  verticalPadding: 0.7,
   ...argv
 };
 
