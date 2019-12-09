@@ -7,6 +7,7 @@ import { Piece } from "./types";
 export class Puzzle extends React.Component<
   {
     pieces: Piece[];
+    viewBox: [number, number, number, number];
   },
   {
     pieces: {
@@ -66,7 +67,7 @@ export class Puzzle extends React.Component<
         <svg
           width={window.innerWidth}
           height={window.innerHeight}
-          viewBox="0 0 100 100"
+          viewBox={this.props.viewBox.join(" ")}
           ref={this.ref}
         >
           {guides}

@@ -6,5 +6,6 @@ export interface Conf {
   svgStartY: number;
   svgWidth: number;
   svgHeight: number;
-  svgGutter: number;
+  svgHorizontalGutter: number;
+  svgVerticalGutter: number;
 }

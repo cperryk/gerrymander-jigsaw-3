@@ -30,7 +30,7 @@ class App extends React.Component<
   render() {
     return (
       <div className="App">
-        <Puzzle pieces={this.state.pieces} />
+        <Puzzle pieces={this.state.pieces} viewBox={[0, 0, 100, 150]} />
       </div>
     );
   }

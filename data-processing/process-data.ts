@@ -69,24 +69,46 @@ function fitPuzzleBounds(
 
   const xScale = scaleLinear()
     .domain([minX, minX + mapRange])
-    .range([conf.svgStartX + conf.svgGutter, conf.svgWidth - conf.svgGutter]);
+    .range([
+      conf.svgStartX + conf.svgHorizontalGutter,
+      conf.svgWidth - conf.svgHorizontalGutter
+    ]);
 
   const yScale = scaleLinear()
     .domain([minY, minY + mapRange])
-    .range([conf.svgStartY + conf.svgGutter, conf.svgHeight - conf.svgGutter]);
+    .range([
+      conf.svgStartY + conf.svgVerticalGutter,
+      conf.svgHeight - conf.svgVerticalGutter
+    ]);
 
   const horizontalCenteringOffset =
-    (conf.svgWidth - conf.svgGutter * 2 - (xScale(maxX) - xScale(minX))) / 2;
+    (conf.svgWidth -
+      conf.svgHorizontalGutter * 2 -
+      (xScale(maxX) - xScale(minX))) /
+    2;
+
+  const verticalCenteringOffset =
+    (conf.svgHeight -
+      conf.svgVerticalGutter * 2 -
+      (yScale(maxY) - yScale(minY))) /
+    2;
 
   return applyProjections(
     scalePosition(xScale, yScale),
-    offsetX(horizontalCenteringOffset)
+    offsetX(horizontalCenteringOffset),
+    offsetY(verticalCenteringOffset)
   );
 }
 
 function offsetX(offset: number): projection {
   return ([x, y]) => {
     return [x + offset, y];
+  };
+}
+
+function offsetY(offset: number): projection {
+  return ([x, y]) => {
+    return [x, y + offset];
   };
 }
 
@@ -161,8 +183,9 @@ const conf: Conf = {
   svgStartX: 0,
   svgStartY: 0,
   svgWidth: 100,
-  svgHeight: 100,
-  svgGutter: 20,
+  svgHeight: 140,
+  svgHorizontalGutter: 0,
+  svgVerticalGutter: 20,
   ...argv
 };
 
