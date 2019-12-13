@@ -23,6 +23,18 @@ body {
   color: white;
 }
 
+.timer {
+  font-family: monospace;
+  font-size: 2em;
+  line-height: 1.5em;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid #c7c7c7;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+}
+
 .App-link {
   color: #09d3ac;
 }

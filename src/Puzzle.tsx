@@ -4,11 +4,12 @@ import { PuzzlePiece } from "./PuzzlePiece";
 import { PuzzleGuide } from "./PuzzleGuide";
 import { Piece } from "./types";
 
-export class Puzzle extends React.Component<
+export class Puzzle extends React.PureComponent<
   {
     pieces: Piece[];
     viewBox: [number, number, number, number];
     devMode?: boolean;
+    onSolved?: () => any;
   },
   {
     pieces: {
@@ -155,7 +156,7 @@ export class Puzzle extends React.Component<
       this.setState({
         solved: true
       });
-      window.alert("solved!");
+      this.props.onSolved();
     }
     this.logPositions();
   }
