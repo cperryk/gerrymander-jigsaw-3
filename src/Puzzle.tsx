@@ -7,6 +7,7 @@ import { Piece } from "./types";
 export class Puzzle extends React.PureComponent<
   {
     pieces: Piece[];
+    solved: boolean;
     viewBox: [number, number, number, number];
     devMode?: boolean;
     onSolved?: () => any;
@@ -41,7 +42,7 @@ export class Puzzle extends React.PureComponent<
         guideRef: React.createRef(),
         pieceRef: React.createRef()
       })),
-      solved: false,
+      solved: this.props.solved || false,
       dragScale: 1,
       tolerance: 30
     };

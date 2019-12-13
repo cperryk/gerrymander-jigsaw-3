@@ -4,6 +4,7 @@ import districts from "../src/districts/la.json";
 import { Puzzle } from "./Puzzle";
 import { Piece } from "./types";
 import { Timer } from "./Timer";
+import { EndSlide } from "./EndSlide";
 
 function getPieces(): Piece[] {
   return Object.entries(districts.paths).map(([key, paths]) => {
@@ -37,10 +38,19 @@ class App extends React.Component<
   }
   render() {
     const viewBox = districts.viewBox;
+    const timer = this.state.solved ? null : (
+      <Timer time={this.state.duration} />
+    );
+    const endSlide = this.state.solved ? (
+      <EndSlide time={this.state.duration} />
+    ) : null;
+
     return (
       <div className="App">
-        <Timer time={this.state.duration} />
+        {endSlide}
+        {timer}
         <Puzzle
+          solved={this.state.solved}
           onSolved={this.handleSolved.bind(this)}
           pieces={this.state.pieces}
           viewBox={[viewBox.minX, viewBox.minY, viewBox.width, viewBox.height]}
@@ -60,6 +70,7 @@ class App extends React.Component<
     clearInterval(this.interval);
   }
   incrementTime() {
+    if (this.state.solved) return;
     this.setState({
       duration: Math.round(new Date().getTime() - this.state.startTime)
     });

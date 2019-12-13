@@ -1,7 +1,6 @@
 import React from "react";
+import { formatTime } from "./utils";
 
 export const Timer: React.FunctionComponent<{ time: number }> = ({ time }) => {
-  return (
-    <div className="timer">{new Date(time).toISOString().substr(14, 5)}</div>
-  );
+  return <div className="timer">{formatTime(time)}</div>;
 };
