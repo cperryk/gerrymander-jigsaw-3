@@ -3,25 +3,28 @@ import chroma from "chroma-js";
 import { PuzzlePiece } from "./PuzzlePiece";
 import { PuzzleGuide } from "./PuzzleGuide";
 import { Piece } from "./types";
+import { DraggableData } from "react-draggable";
 
 export class Puzzle extends React.PureComponent<
   {
     pieces: Piece[];
     solved: boolean;
+    edited: boolean;
     viewBox: [number, number, number, number];
     devMode?: boolean;
     onSolved?: () => any;
+    onEdited?: () => any;
   },
   {
     pieces: {
       key: string;
       paths: string[];
       color: string;
-      transform: [number, number];
       guideRef: Ref<PuzzleGuide>;
       pieceRef: Ref<PuzzlePiece>;
+      position: [number, number];
+      originalPosition: [number, number];
     }[];
-    solved: boolean;
     dragScale: number; // number of pixels per svg unit
     tolerance: number;
   }
@@ -33,16 +36,17 @@ export class Puzzle extends React.PureComponent<
     const colorScale = chroma
       .scale("Spectral")
       .domain([0, props.pieces.length], props.pieces.length);
+
     this.state = {
       pieces: props.pieces.map((piece, index) => ({
         key: piece.key,
         paths: piece.paths,
-        transform: piece.transform,
+        originalPosition: piece.transform,
+        position: piece.transform,
         color: colorScale(index),
         guideRef: React.createRef(),
         pieceRef: React.createRef()
       })),
-      solved: this.props.solved || false,
       dragScale: 1,
       tolerance: 1000
     };
@@ -55,11 +59,15 @@ export class Puzzle extends React.PureComponent<
         key={piece.key}
         color={piece.color}
         onDragStart={() => this.handleDrag(index)}
-        onDragStop={() => this.handleDragStop()}
-        solved={this.state.solved}
+        onDragStop={draggableData => this.handleDragStop(index, draggableData)}
         dragScale={this.state.dragScale}
         ref={piece.pieceRef}
-        transform={piece.transform}
+        locked={this.props.solved}
+        position={
+          (this.props.solved && [0, 0]) ||
+          (this.props.edited && piece.position) ||
+          piece.originalPosition
+        }
       />
     ));
     const guides = this.state.pieces.map((piece, index) => (
@@ -152,11 +160,18 @@ export class Puzzle extends React.PureComponent<
   isAllSolved() {
     return this.state.pieces.every((piece, index) => this.isPieceSolved(index));
   }
-  handleDragStop() {
-    if (this.isAllSolved()) {
-      this.setState({
-        solved: true
-      });
+  handleDragStop(index: number, e: DraggableData) {
+    const piece = this.state.pieces[index];
+    const solved = this.isAllSolved();
+    piece.position = [e.x, e.y];
+
+    this.setState({
+      pieces: [...this.state.pieces]
+    });
+
+    this.props.onEdited();
+
+    if (solved) {
       this.props.onSolved();
     }
     this.logPositions();
@@ -165,16 +180,10 @@ export class Puzzle extends React.PureComponent<
   logPositions() {
     if (!this.props.devMode) return;
     const positions = this.state.pieces.reduce((prev, curr) => {
-      const { pieceRef } = curr;
-      if (
-        typeof pieceRef === "object" &&
-        typeof pieceRef.current.ref === "object"
-      ) {
-        const position = pieceRef.current.getPosition();
-        if (position) {
-          const [x, y] = position;
-          prev[curr.key] = [x.toFixed(1), y.toFixed(1)];
-        }
+      const position = curr.position;
+      if (position) {
+        const [x, y] = position;
+        prev[curr.key] = [x.toFixed(1), y.toFixed(1)];
       }
       return prev;
     }, {});

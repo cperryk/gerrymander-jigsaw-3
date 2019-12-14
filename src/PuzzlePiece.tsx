@@ -4,31 +4,27 @@ export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
     onDragStart: () => any;
-    onDragStop: () => any;
+    onDragStop: (DraggableData) => any;
     color: string;
-    solved: boolean;
+    locked: boolean;
     dragScale: number;
-    transform: [number, number];
+    position: [number, number];
   },
   {
-    translate: [number, number];
     color: string;
     hoverColor: string;
     dragColor: string;
     dragging: boolean;
-    lastPosition?: [number, number];
   }
 > {
   public ref: Ref<SVGGElement>;
   constructor(props) {
     super(props);
     this.state = {
-      translate: [50, 0],
       dragColor: "yellow",
       hoverColor: "rgb(100%, 100%, 44.1%)",
       color: this.props.color,
-      dragging: false,
-      lastPosition: this.props.transform
+      dragging: false
     };
     this.ref = React.createRef();
   }
@@ -43,7 +39,7 @@ export class PuzzlePiece extends React.PureComponent<
           key={index}
           strokeLinecap="square"
           strokeMiterlimit={4}
-          cursor={this.props.solved ? "normal" : "move"}
+          cursor={this.props.locked ? "normal" : "move"}
         />
       );
     });
@@ -52,11 +48,8 @@ export class PuzzlePiece extends React.PureComponent<
         scale={this.props.dragScale}
         onStart={this.handleDragStart.bind(this)}
         onStop={this.handleDragStop.bind(this)}
-        disabled={this.props.solved}
-        defaultPosition={{
-          x: this.props.transform[0],
-          y: this.props.transform[1]
-        }}
+        disabled={this.props.locked}
+        position={{ x: this.props.position[0], y: this.props.position[1] }}
       >
         <g
           onMouseOver={this.handleMouseOver.bind(this)}
@@ -75,21 +68,16 @@ export class PuzzlePiece extends React.PureComponent<
     }
   }
   handleMouseOver() {
-    if (this.props.solved || this.state.dragging) return;
+    if (this.props.locked || this.state.dragging) return;
     this.setState({
       color: this.state.hoverColor
     });
   }
   handleMouseOut() {
-    if (this.props.solved || this.state.dragging) return;
+    if (this.props.locked || this.state.dragging) return;
     this.setState({
       color: this.props.color
     });
-  }
-  componentDidUpdate() {
-    if (this.props.solved && typeof this.ref === "object") {
-      this.ref.current.setAttribute("transform", "");
-    }
   }
   handleDragStart() {
     this.setState({
@@ -98,15 +86,11 @@ export class PuzzlePiece extends React.PureComponent<
     });
     this.props.onDragStart();
   }
-  handleDragStop(e: MouseEvent, data: DraggableData) {
+  handleDragStop(e: MouseEvent, draggableData: DraggableData) {
     this.setState({
       dragging: false,
-      color: this.props.color,
-      lastPosition: [data.x, data.y]
+      color: this.props.color
     });
-    this.props.onDragStop();
-  }
-  getPosition(): [number, number] | null {
-    return this.state.lastPosition;
+    this.props.onDragStop(draggableData);
   }
 }

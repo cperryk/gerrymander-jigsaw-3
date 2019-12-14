@@ -1,5 +1,5 @@
 import React from "react";
-import { formatTimeVerbose, getShareUrl } from "./utils";
+import { getShareUrl } from "./utils";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -10,13 +10,15 @@ export const EndSlide: React.FunctionComponent<{
   title: string;
   subtitle: string;
   shareText: string;
-}> = ({ title, subtitle, shareText }) => {
+  onRestart: () => any;
+}> = ({ title, subtitle, shareText, onRestart }) => {
   const shareUrl = getShareUrl();
   return (
     <div className="end-slide">
       <div>
         <h2>{title}</h2>
         <p>{subtitle}</p>
+        <button onClick={() => onRestart()}>Restart</button>
         <div className="share-btns">
           <FacebookShareButton
             className="btn-share"

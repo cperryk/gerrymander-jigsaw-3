@@ -25,6 +25,7 @@ class App extends React.Component<
     pieces: Piece[];
     duration: number;
     solved: boolean;
+    edited: boolean;
   }
 > {
   public interval: NodeJS.Timeout;
@@ -34,7 +35,8 @@ class App extends React.Component<
       startTime: new Date().getTime(),
       pieces: getPieces(),
       duration: 0,
-      solved: false
+      solved: false,
+      edited: false
     };
   }
   render() {
@@ -51,6 +53,7 @@ class App extends React.Component<
         shareText={`I solved the puzzle in ${formatTimeVerbose(
           this.state.duration
         )}`}
+        onRestart={() => this.restart()}
       />
     ) : null;
 
@@ -61,6 +64,8 @@ class App extends React.Component<
         <Puzzle
           solved={this.state.solved}
           onSolved={this.handleSolved.bind(this)}
+          onEdited={this.handleEdit.bind(this)}
+          edited={this.state.edited}
           pieces={this.state.pieces}
           viewBox={[viewBox.minX, viewBox.minY, viewBox.width, viewBox.height]}
           devMode={false}
@@ -84,10 +89,23 @@ class App extends React.Component<
       duration: Math.round(new Date().getTime() - this.state.startTime)
     });
   }
+  handleEdit() {
+    this.setState({
+      edited: true
+    });
+  }
   handleSolved() {
     clearInterval(this.interval);
     this.setState({
       solved: true
+    });
+  }
+  restart() {
+    this.setState({
+      startTime: new Date().getTime(),
+      solved: false,
+      duration: 0,
+      edited: false
     });
   }
 }
