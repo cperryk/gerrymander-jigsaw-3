@@ -3,3 +3,9 @@ export type Piece = {
   key: string;
   transform: [number, number];
 };
+
+export enum PuzzleState {
+  initial,
+  edited,
+  solved
+}

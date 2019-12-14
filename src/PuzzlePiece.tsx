@@ -17,7 +17,6 @@ export class PuzzlePiece extends React.PureComponent<
     dragging: boolean;
   }
 > {
-  public ref: Ref<SVGGElement>;
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +25,6 @@ export class PuzzlePiece extends React.PureComponent<
       color: this.props.color,
       dragging: false
     };
-    this.ref = React.createRef();
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -54,18 +52,11 @@ export class PuzzlePiece extends React.PureComponent<
         <g
           onMouseOver={this.handleMouseOver.bind(this)}
           onMouseOut={this.handleMouseOut.bind(this)}
-          ref={this.ref}
         >
           {pathEls}
         </g>
       </Draggable>
     );
-  }
-  getBbox(): ClientRect | null {
-    const ref = this.ref;
-    if (typeof ref === "object" && ref && ref.current) {
-      return ref.current.getBoundingClientRect();
-    }
   }
   handleMouseOver() {
     if (this.props.locked || this.state.dragging) return;

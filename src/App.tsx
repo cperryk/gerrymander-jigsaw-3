@@ -63,7 +63,6 @@ class App extends React.Component<
         {timer}
         <Puzzle
           solved={this.state.solved}
-          onSolved={this.handleSolved.bind(this)}
           onEdited={this.handleEdit.bind(this)}
           edited={this.state.edited}
           pieces={this.state.pieces}
@@ -89,10 +88,17 @@ class App extends React.Component<
       duration: Math.round(new Date().getTime() - this.state.startTime)
     });
   }
-  handleEdit() {
-    this.setState({
-      edited: true
-    });
+  handleEdit(solved: boolean) {
+    if (solved) {
+      this.setState({
+        edited: true,
+        solved: true
+      });
+    } else {
+      this.setState({
+        edited: true
+      });
+    }
   }
   handleSolved() {
     clearInterval(this.interval);

@@ -12,8 +12,7 @@ export class Puzzle extends React.PureComponent<
     edited: boolean;
     viewBox: [number, number, number, number];
     devMode?: boolean;
-    onSolved?: () => any;
-    onEdited?: () => any;
+    onEdited?: (solved: boolean) => any;
   },
   {
     pieces: {
@@ -48,7 +47,7 @@ export class Puzzle extends React.PureComponent<
         pieceRef: React.createRef()
       })),
       dragScale: 1,
-      tolerance: 1000
+      tolerance: 30
     };
     this.ref = React.createRef();
   }
@@ -136,25 +135,15 @@ export class Puzzle extends React.PureComponent<
     this.movePieceToFront(index);
   }
   isPieceSolved(index: number): boolean {
-    const { guideRef, pieceRef } = this.state.pieces[index];
-    const { tolerance } = this.state;
-    if (!(typeof pieceRef === "object" && typeof guideRef === "object")) {
-      return false;
-    }
-    const pieceBbox = pieceRef.current.getBbox();
-    const guideBbox = guideRef.current.getBbox();
-    const solutionBounds = {
-      x1: guideBbox.left - tolerance,
-      x2: guideBbox.left + tolerance,
-      y1: guideBbox.top - tolerance,
-      y2: guideBbox.top + tolerance
-    };
-    const { left: x, top: y } = pieceBbox;
-    const out =
-      x > solutionBounds.x1 &&
-      x < solutionBounds.x2 &&
-      y > solutionBounds.y1 &&
-      y < solutionBounds.y2;
+    const {
+      position: [x, y]
+    } = this.state.pieces[index];
+    const { tolerance, dragScale } = this.state;
+    const x1 = x * dragScale - tolerance;
+    const x2 = x * dragScale + tolerance;
+    const y1 = y * dragScale - tolerance;
+    const y2 = y * dragScale + tolerance;
+    const out = x > x1 && x < x2 && y > y1 && y < y2;
     return out;
   }
   isAllSolved() {
@@ -162,18 +151,13 @@ export class Puzzle extends React.PureComponent<
   }
   handleDragStop(index: number, e: DraggableData) {
     const piece = this.state.pieces[index];
-    const solved = this.isAllSolved();
     piece.position = [e.x, e.y];
 
     this.setState({
       pieces: [...this.state.pieces]
     });
 
-    this.props.onEdited();
-
-    if (solved) {
-      this.props.onSolved();
-    }
+    this.props.onEdited(this.isAllSolved());
     this.logPositions();
   }
   // for development

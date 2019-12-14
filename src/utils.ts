@@ -7,9 +7,7 @@ function parseMilliseconds(milliseconds: number): [number, number] {
 }
 
 export function formatTimeVerbose(milliseconds: number): string {
-  console.log(milliseconds);
   const [minutes, seconds] = parseMilliseconds(milliseconds);
-  console.log(minutes, seconds);
   const parts = [];
   if (minutes === 1) {
     parts.push("1 minute");
