@@ -1,33 +1,34 @@
 import React from "react";
-import { formatTimeVerbose } from "./utils";
+import { formatTimeVerbose, getShareUrl } from "./utils";
 import {
   FacebookShareButton,
   TwitterShareButton,
   EmailShareButton
 } from "react-share";
 
-export const EndSlide: React.FunctionComponent<{ time: number }> = ({
-  time
-}) => {
+export const EndSlide: React.FunctionComponent<{
+  title: string;
+  subtitle: string;
+  shareText: string;
+}> = ({ title, subtitle, shareText }) => {
+  const shareUrl = getShareUrl();
   return (
     <div className="end-slide">
       <div>
-        <h2>Complete!</h2>
-        <p>
-          You solved the puzzle in <strong>{formatTimeVerbose(time)}</strong>.
-        </p>
+        <h2>{title}</h2>
+        <p>{subtitle}</p>
         <div className="share-btns">
           <FacebookShareButton
             className="btn-share"
-            url="http://slate.com"
-            quote={`I put ridiculously gerrymandered Louisiana back together in ${time}`}
+            url={shareUrl}
+            quote={shareText}
           >
             Share on Facebook
           </FacebookShareButton>
-          <TwitterShareButton className="btn-share" url="http://slate.com">
+          <TwitterShareButton className="btn-share" url={shareUrl}>
             Tweet
           </TwitterShareButton>
-          <EmailShareButton className="btn-share" url="http://slate.com">
+          <EmailShareButton className="btn-share" url={shareUrl}>
             Email
           </EmailShareButton>
         </div>

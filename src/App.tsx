@@ -5,6 +5,7 @@ import { Puzzle } from "./Puzzle";
 import { Piece } from "./types";
 import { Timer } from "./Timer";
 import { EndSlide } from "./EndSlide";
+import { formatTimeVerbose } from "./utils";
 
 function getPieces(): Piece[] {
   return Object.entries(districts.paths).map(([key, paths]) => {
@@ -42,7 +43,15 @@ class App extends React.Component<
       <Timer time={this.state.duration} />
     );
     const endSlide = this.state.solved ? (
-      <EndSlide time={this.state.duration} />
+      <EndSlide
+        title="Solved!"
+        subtitle={`You solved the puzzle in ${formatTimeVerbose(
+          this.state.duration
+        )}.`}
+        shareText={`I solved the puzzle in ${formatTimeVerbose(
+          this.state.duration
+        )}`}
+      />
     ) : null;
 
     return (
