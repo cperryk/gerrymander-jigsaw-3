@@ -8,8 +8,7 @@ import { DraggableData } from "react-draggable";
 export class Puzzle extends React.PureComponent<
   {
     pieces: Piece[];
-    solved: boolean;
-    edited: boolean;
+    stage: "initial" | "editing" | "end";
     viewBox: [number, number, number, number];
     devMode?: boolean;
     onEdited?: (solved: boolean) => any;
@@ -61,12 +60,8 @@ export class Puzzle extends React.PureComponent<
         onDragStop={draggableData => this.handleDragStop(index, draggableData)}
         dragScale={this.state.dragScale}
         ref={piece.pieceRef}
-        locked={this.props.solved}
-        position={
-          (this.props.solved && [0, 0]) ||
-          (this.props.edited && piece.position) ||
-          piece.originalPosition
-        }
+        locked={this.props.stage === "end"}
+        position={piece.position}
       />
     ));
     const guides = this.state.pieces.map((piece, index) => (
@@ -94,6 +89,29 @@ export class Puzzle extends React.PureComponent<
         </svg>
       </div>
     );
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.stage !== this.props.stage) {
+      switch (this.props.stage) {
+        case "editing":
+        case "initial":
+          this.setState({
+            pieces: this.state.pieces.map(piece => {
+              piece.position = piece.originalPosition;
+              return piece;
+            })
+          });
+          break;
+        case "end":
+          this.setState({
+            pieces: this.state.pieces.map(piece => {
+              piece.position = [0, 0];
+              return piece;
+            })
+          });
+          break;
+      }
+    }
   }
   componentDidMount() {
     this.refreshDragScale();

@@ -6,6 +6,7 @@ import { Piece } from "./types";
 import { Timer } from "./Timer";
 import { EndSlide } from "./EndSlide";
 import { formatTimeVerbose } from "./utils";
+import { StartSlide } from "./StartSlide";
 
 function getPieces(): Piece[] {
   return Object.entries(districts.paths).map(([key, paths]) => {
@@ -21,10 +22,10 @@ function getPieces(): Piece[] {
 class App extends React.Component<
   {},
   {
+    stage: "start" | "puzzle" | "end";
     startTime: number;
     pieces: Piece[];
     duration: number;
-    solved: boolean;
     edited: boolean;
   }
 > {
@@ -35,42 +36,74 @@ class App extends React.Component<
       startTime: new Date().getTime(),
       pieces: getPieces(),
       duration: 0,
-      solved: false,
+      stage: "start",
       edited: false
     };
   }
   render() {
-    const viewBox = districts.viewBox;
-    const timer = this.state.solved ? null : (
-      <Timer time={this.state.duration} />
-    );
-    const endSlide = this.state.solved ? (
-      <EndSlide
-        title="Solved!"
-        subtitle={`You solved the puzzle in ${formatTimeVerbose(
-          this.state.duration
-        )}.`}
-        shareText={`I solved the puzzle in ${formatTimeVerbose(
-          this.state.duration
-        )}`}
-        onRestart={() => this.restart()}
-      />
-    ) : null;
-
-    return (
-      <div className="App">
-        {endSlide}
-        {timer}
-        <Puzzle
-          solved={this.state.solved}
-          onEdited={this.handleEdit.bind(this)}
-          edited={this.state.edited}
-          pieces={this.state.pieces}
-          viewBox={[viewBox.minX, viewBox.minY, viewBox.width, viewBox.height]}
-          devMode={false}
-        />
-      </div>
-    );
+    switch (this.state.stage) {
+      case "start":
+        return (
+          <div className="App">
+            <StartSlide
+              title="How quickly can you put the pieces back together?"
+              onStart={() => this.setState({ stage: "puzzle" })}
+            />
+            <Puzzle
+              stage="initial"
+              pieces={this.state.pieces}
+              viewBox={[
+                districts.viewBox.minX,
+                districts.viewBox.minY,
+                districts.viewBox.width,
+                districts.viewBox.height
+              ]}
+            />
+          </div>
+        );
+      case "puzzle":
+        return (
+          <div className="App">
+            <Timer time={this.state.duration} />
+            <Puzzle
+              stage="editing"
+              onEdited={this.handleEdit.bind(this)}
+              pieces={this.state.pieces}
+              viewBox={[
+                districts.viewBox.minX,
+                districts.viewBox.minY,
+                districts.viewBox.width,
+                districts.viewBox.height
+              ]}
+            />
+          </div>
+        );
+      case "end":
+        return (
+          <div className="App">
+            <EndSlide
+              title="Solved!"
+              subtitle={`You solved the puzzle in ${formatTimeVerbose(
+                this.state.duration
+              )}.`}
+              shareText={`I solved the puzzle in ${formatTimeVerbose(
+                this.state.duration
+              )}`}
+              onRestart={() => this.restart()}
+            />
+            <Puzzle
+              stage="end"
+              pieces={this.state.pieces}
+              viewBox={[
+                districts.viewBox.minX,
+                districts.viewBox.minY,
+                districts.viewBox.width,
+                districts.viewBox.height
+              ]}
+            />
+          </div>
+        );
+    }
   }
   componentDidMount() {
     document.addEventListener("touchstart", e => {
@@ -83,7 +116,7 @@ class App extends React.Component<
     clearInterval(this.interval);
   }
   incrementTime() {
-    if (this.state.solved) return;
+    if (this.state.stage !== "puzzle") return;
     this.setState({
       duration: Math.round(new Date().getTime() - this.state.startTime)
     });
@@ -92,7 +125,7 @@ class App extends React.Component<
     if (solved) {
       this.setState({
         edited: true,
-        solved: true
+        stage: "end"
       });
     } else {
       this.setState({
@@ -103,13 +136,13 @@ class App extends React.Component<
   handleSolved() {
     clearInterval(this.interval);
     this.setState({
-      solved: true
+      stage: "end"
     });
   }
   restart() {
     this.setState({
       startTime: new Date().getTime(),
-      solved: false,
+      stage: "puzzle",
       duration: 0,
       edited: false
     });
