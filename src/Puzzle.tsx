@@ -49,15 +49,18 @@ export class Puzzle extends React.PureComponent<
       tolerance: 30
     };
     this.ref = React.createRef();
+    this.handleDragStart = this.handleDragStart.bind(this);
+    this.handleDragStop = this.handleDragStop.bind(this);
   }
   render() {
     const pieces = this.state.pieces.map((piece, index) => (
       <PuzzlePiece
+        index={index}
         paths={piece.paths}
         key={piece.key}
         color={piece.color}
-        onDragStart={() => this.handleDrag(index)}
-        onDragStop={draggableData => this.handleDragStop(index, draggableData)}
+        onDragStart={this.handleDragStart}
+        onDragStop={this.handleDragStop}
         dragScale={this.state.dragScale}
         ref={piece.pieceRef}
         locked={this.props.stage === "end"}
@@ -149,9 +152,6 @@ export class Puzzle extends React.PureComponent<
       ]
     });
   }
-  handleDrag(index: number) {
-    this.movePieceToFront(index);
-  }
   isPieceSolved(index: number): boolean {
     const {
       position: [x, y]
@@ -166,6 +166,9 @@ export class Puzzle extends React.PureComponent<
   }
   isAllSolved() {
     return this.state.pieces.every((piece, index) => this.isPieceSolved(index));
+  }
+  handleDragStart(index: number) {
+    this.movePieceToFront(index);
   }
   handleDragStop(index: number, e: DraggableData) {
     const piece = this.state.pieces[index];

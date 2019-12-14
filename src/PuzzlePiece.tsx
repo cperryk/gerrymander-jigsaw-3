@@ -3,12 +3,13 @@ import Draggable, { DraggableData } from "react-draggable";
 export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
-    onDragStart: () => any;
-    onDragStop: (DraggableData) => any;
+    onDragStart: (index: number) => any;
+    onDragStop: (index: number, DraggableData) => any;
     color: string;
     locked: boolean;
     dragScale: number;
     position: [number, number];
+    index: number;
   },
   {
     color: string;
@@ -75,13 +76,13 @@ export class PuzzlePiece extends React.PureComponent<
       dragging: true,
       color: this.state.dragColor
     });
-    this.props.onDragStart();
+    this.props.onDragStart(this.props.index);
   }
   handleDragStop(e: MouseEvent, draggableData: DraggableData) {
     this.setState({
       dragging: false,
       color: this.props.color
     });
-    this.props.onDragStop(draggableData);
+    this.props.onDragStop(this.props.index, draggableData);
   }
 }
