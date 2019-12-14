@@ -44,7 +44,7 @@ export class Puzzle extends React.PureComponent<
       })),
       solved: this.props.solved || false,
       dragScale: 1,
-      tolerance: 30
+      tolerance: 1000
     };
     this.ref = React.createRef();
   }
