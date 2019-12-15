@@ -73,3 +73,16 @@ body {
   position: relative;
   top: 1px;
 }
+
+.puzzle-piece-path {
+  stroke: black;
+  stroke-width: 1;
+  stroke-linecap: square;
+  stroke-miterlimit: 4;
+}
+
+.puzzle-guide-path {
+  stroke: #e3e3e3;
+  stroke-width: 0.5;
+  fill: #e3e3e3;
+}

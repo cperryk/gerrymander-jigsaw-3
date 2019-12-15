@@ -1,5 +1,7 @@
 import React from "react";
 import Draggable, { DraggableData } from "react-draggable";
+import classnames from "classnames";
+
 export class PuzzlePiece extends React.PureComponent<
   {
     paths: string[];
@@ -13,31 +15,28 @@ export class PuzzlePiece extends React.PureComponent<
   },
   {
     color: string;
-    hoverColor: string;
-    dragColor: string;
     dragging: boolean;
   }
 > {
+  hoverColor: string;
+  dragColor: string;
   constructor(props) {
     super(props);
     this.state = {
-      dragColor: "yellow",
-      hoverColor: "rgb(100%, 100%, 44.1%)",
       color: this.props.color,
       dragging: false
     };
+    this.hoverColor = "rgb(100%, 100%, 44.1%)";
+    this.dragColor = "yellow";
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
       return (
         <path
           d={path}
-          stroke="black"
-          strokeWidth={1}
+          className="puzzle-piece-path"
           fill={this.state.color}
           key={index}
-          strokeLinecap="square"
-          strokeMiterlimit={4}
           cursor={this.props.locked ? "normal" : "move"}
         />
       );
@@ -62,7 +61,7 @@ export class PuzzlePiece extends React.PureComponent<
   handleMouseOver() {
     if (this.props.locked || this.state.dragging) return;
     this.setState({
-      color: this.state.hoverColor
+      color: this.hoverColor
     });
   }
   handleMouseOut() {
@@ -74,7 +73,7 @@ export class PuzzlePiece extends React.PureComponent<
   handleDragStart() {
     this.setState({
       dragging: true,
-      color: this.state.dragColor
+      color: this.dragColor
     });
     this.props.onDragStart(this.props.index);
   }

@@ -9,15 +9,7 @@ export class PuzzleGuide extends React.Component<{
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
-      return (
-        <path
-          d={path}
-          stroke="{this.props.color}"
-          strokeWidth={0.5}
-          fill="#e3e3e3"
-          key={index}
-        />
-      );
+      return <path className="puzzle-guide-path" d={path} key={index} />;
     });
     return <g ref={this.ref}>{pathEls}</g>;
   }
