@@ -14,7 +14,6 @@ class App extends React.Component<
     startTime: Date;
     pieces: Piece[];
     duration: number;
-    edited: boolean;
     viewBox: [number, number, number, number];
   }
 > {
@@ -27,10 +26,9 @@ class App extends React.Component<
       viewBox,
       startTime: new Date(),
       duration: 0,
-      stage: "start",
-      edited: false
+      stage: "start"
     };
-    this.handleEdit = this.handleEdit.bind(this);
+    this.handleSolved = this.handleSolved.bind(this);
     this.handleStart = this.handleStart.bind(this);
     this.handleRestart = this.handleRestart.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
@@ -57,7 +55,7 @@ class App extends React.Component<
             <Timer time={this.state.duration} />
             <Puzzle
               stage="editing"
-              onEdited={this.handleEdit}
+              onSolved={this.handleSolved}
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
             />
@@ -99,18 +97,6 @@ class App extends React.Component<
       duration: Math.round(millisecondsSince(this.state.startTime))
     });
   }
-  handleEdit(solved: boolean) {
-    if (solved) {
-      this.setState({
-        edited: true,
-        stage: "end"
-      });
-    } else {
-      this.setState({
-        edited: true
-      });
-    }
-  }
   handleStart() {
     this.setState({ stage: "puzzle" });
   }
@@ -124,8 +110,7 @@ class App extends React.Component<
     this.setState({
       startTime: new Date(),
       stage: "puzzle",
-      duration: 0,
-      edited: false
+      duration: 0
     });
   }
   handleTouchStart(e: TouchEvent) {

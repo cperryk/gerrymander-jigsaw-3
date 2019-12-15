@@ -11,7 +11,7 @@ export class Puzzle extends React.PureComponent<
     stage: "initial" | "editing" | "end";
     viewBox: [number, number, number, number];
     devMode?: boolean;
-    onEdited?: (solved: boolean) => any;
+    onSolved?: () => any;
   },
   {
     pieces: {
@@ -178,7 +178,9 @@ export class Puzzle extends React.PureComponent<
       pieces: [...this.state.pieces]
     });
 
-    this.props.onEdited(this.isAllSolved());
+    if (this.isAllSolved()) {
+      this.props.onSolved();
+    }
     this.logPositions();
   }
   // for development
