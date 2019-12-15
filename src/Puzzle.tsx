@@ -51,6 +51,7 @@ export class Puzzle extends React.PureComponent<
     this.ref = React.createRef();
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleDragStop = this.handleDragStop.bind(this);
+    this.resizeHandler = this.handleResize.bind(this);
   }
   render() {
     const pieces = this.state.pieces.map((piece, index) => (
@@ -118,7 +119,6 @@ export class Puzzle extends React.PureComponent<
   }
   componentDidMount() {
     this.refreshDragScale();
-    this.resizeHandler = this.handleResize.bind(this);
     window.addEventListener("resize", this.resizeHandler);
   }
   componentWillUnmount() {
@@ -156,15 +156,11 @@ export class Puzzle extends React.PureComponent<
     const {
       position: [x, y]
     } = this.state.pieces[index];
-    const { tolerance, dragScale } = this.state;
-    const x1 = x * dragScale - tolerance;
-    const x2 = x * dragScale + tolerance;
-    const y1 = y * dragScale - tolerance;
-    const y2 = y * dragScale + tolerance;
-    const out = x > x1 && x < x2 && y > y1 && y < y2;
-    return out;
+    const { tolerance } = this.state;
+    return x > -tolerance && x < tolerance && y > -tolerance && y < tolerance;
   }
   isAllSolved() {
+    this.state.pieces.forEach((piece, index) => this.isPieceSolved(index));
     return this.state.pieces.every((piece, index) => this.isPieceSolved(index));
   }
   handleDragStart(index: number) {
