@@ -15,15 +15,17 @@ class App extends React.Component<
     pieces: Piece[];
     duration: number;
     viewBox: [number, number, number, number];
+    title: string;
   }
 > {
   public interval: NodeJS.Timeout;
   constructor(props) {
     super(props);
-    const { pieces, viewBox } = getData();
+    const { pieces, viewBox, title } = getData();
     this.state = {
       pieces,
       viewBox,
+      title,
       startTime: new Date(),
       duration: 0,
       stage: "start"
@@ -38,10 +40,7 @@ class App extends React.Component<
       case "start":
         return (
           <div className="App">
-            <StartSlide
-              title="How quickly can you put the pieces back together?"
-              onStart={this.handleStart}
-            />
+            <StartSlide title={this.state.title} onStart={this.handleStart} />
             <Puzzle
               stage="initial"
               pieces={this.state.pieces}
@@ -101,7 +100,6 @@ class App extends React.Component<
     this.setState({ stage: "puzzle" });
   }
   handleSolved() {
-    clearInterval(this.interval);
     this.setState({
       stage: "end"
     });

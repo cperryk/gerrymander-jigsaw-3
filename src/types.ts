@@ -9,3 +9,9 @@ export enum PuzzleState {
   edited,
   solved
 }
+
+export interface PuzzleConfiguration {
+  viewBox: [number, number, number, number];
+  pieces: Piece[];
+  title: string;
+}

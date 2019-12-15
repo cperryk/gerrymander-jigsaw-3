@@ -1,6 +1,6 @@
 import { parse } from "query-string";
-import districts from "../src/districts/la.json";
-import { Piece } from "./types";
+import configuration from "../src/districts/la.json";
+import { PuzzleConfiguration } from "./types";
 
 function parseMilliseconds(milliseconds: number): [number, number] {
   const minutes = Math.floor(milliseconds / (1000 * 60));
@@ -38,25 +38,23 @@ export function getShareUrl(): string {
     : window.location.href;
 }
 
-export function getData(): {
-  viewBox: [number, number, number, number];
-  pieces: Piece[];
-} {
+export function getData(): PuzzleConfiguration {
   return {
     viewBox: [
-      districts.viewBox.minX,
-      districts.viewBox.minY,
-      districts.viewBox.width,
-      districts.viewBox.height
+      configuration.viewBox.minX,
+      configuration.viewBox.minY,
+      configuration.viewBox.width,
+      configuration.viewBox.height
     ],
-    pieces: Object.entries(districts.paths).map(([key, paths]) => {
-      const [x, y] = districts.transforms[key] || ["0", "0"];
+    pieces: Object.entries(configuration.paths).map(([key, paths]) => {
+      const [x, y] = configuration.transforms[key] || ["0", "0"];
       return {
         key,
         paths,
         transform: [parseFloat(x), parseFloat(y)]
       };
-    })
+    }),
+    title: configuration.title
   };
 }
 

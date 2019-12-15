@@ -154,15 +154,19 @@ function geoJsonViewBoxToSvgViewBox(
 async function go(conf: Conf) {
   let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
+
   const svgHash = {
-    paths: await toSvgHash(geojson, conf),
     transforms: {},
-    viewBox: geoJsonViewBoxToSvgViewBox(geojson.bbox, conf)
+    paths: [],
+    viewBox: []
   };
   if (existsSync(conf.outPath)) {
-    const { transforms } = readJsonSync(conf.outPath);
-    svgHash.transforms = transforms;
+    Object.assign(svgHash, readJsonSync(conf.outPath));
   }
+  Object.assign(svgHash, {
+    paths: await toSvgHash(geojson, conf),
+    viewBox: geoJsonViewBoxToSvgViewBox(geojson.bbox, conf)
+  });
   console.log(svgHash);
   writeJson(conf.outPath, svgHash);
 }
