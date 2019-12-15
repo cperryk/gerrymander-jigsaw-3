@@ -14,12 +14,12 @@ export function formatTimeVerbose(milliseconds: number): string {
   if (minutes === 1) {
     parts.push("1 minute");
   } else if (minutes > 1) {
-    parts.push(`${minutes} minutes`);
+    parts.push(`${minutes || 0} minutes`);
   }
   if (seconds === 1) {
     parts.push("1 second");
   } else if (seconds > 1) {
-    parts.push(`${seconds} seconds`);
+    parts.push(`${seconds || 0} seconds`);
   }
   return parts.join(", ");
 }

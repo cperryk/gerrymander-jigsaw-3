@@ -1,6 +1,5 @@
 import React from "react";
 import Draggable, { DraggableData } from "react-draggable";
-import classnames from "classnames";
 
 export class PuzzlePiece extends React.PureComponent<
   {
