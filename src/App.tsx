@@ -5,7 +5,12 @@ import { Puzzle } from "./Puzzle";
 import { StartSlide } from "./StartSlide";
 import { Timer } from "./Timer";
 import { Piece } from "./types";
-import { formatTimeVerbose, getData, millisecondsSince } from "./utils";
+import {
+  formatTimeVerbose,
+  getData,
+  millisecondsSince,
+  formatTime
+} from "./utils";
 
 class App extends React.Component<
   {},
@@ -16,16 +21,18 @@ class App extends React.Component<
     duration: number;
     viewBox: [number, number, number, number];
     title: string;
+    shareText: string;
   }
 > {
   public interval: NodeJS.Timeout;
   constructor(props) {
     super(props);
-    const { pieces, viewBox, title } = getData();
+    const { pieces, viewBox, title, shareText } = getData();
     this.state = {
       pieces,
       viewBox,
       title,
+      shareText,
       startTime: new Date(),
       duration: 0,
       stage: "start"
@@ -61,16 +68,14 @@ class App extends React.Component<
           </div>
         );
       case "end":
+        const timeVerbose = formatTimeVerbose(this.state.duration);
+        const shareText = this.state.shareText.replace("{time}", timeVerbose);
         return (
           <div className="App">
             <EndSlide
               title="Solved!"
-              subtitle={`You solved the puzzle in ${formatTimeVerbose(
-                this.state.duration
-              )}.`}
-              shareText={`I solved the puzzle in ${formatTimeVerbose(
-                this.state.duration
-              )}`}
+              subtitle={`You solved the puzzle in ${timeVerbose}!`}
+              shareText={shareText}
               onRestart={this.handleRestart}
             />
             <Puzzle

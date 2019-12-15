@@ -85,7 +85,10 @@ body {
   fill-opacity: 0.8;
 }
 
-.puzzle-piece-group:hover .puzzle-piece-path,
+.puzzle-piece-group.hovering .puzzle-piece-path {
+  fill: yellow;
+}
+
 .puzzle-piece-group.dragging .puzzle-piece-path {
   fill: yellow;
 }
