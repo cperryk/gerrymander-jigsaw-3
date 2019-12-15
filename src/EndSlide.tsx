@@ -18,7 +18,7 @@ export const EndSlide: React.FunctionComponent<{
       <div>
         <h2>{title}</h2>
         <p>{subtitle}</p>
-        <button onClick={() => onRestart()}>Restart</button>
+        <button onClick={onRestart}>Restart</button>
         <div className="share-btns">
           <FacebookShareButton
             className="btn-share"
