@@ -74,11 +74,19 @@ body {
   top: 1px;
 }
 
-.puzzle-piece-path {
+.puzzle-piece-group .puzzle-piece-path {
   stroke: black;
   stroke-width: 1;
   stroke-linecap: square;
   stroke-miterlimit: 4;
+}
+
+.puzzle-piece-group.dragging .puzzle-piece-path {
+  fill-opacity: 0.8;
+}
+
+.puzzle-piece-group:hover .puzzle-piece-path {
+  fill: yellow;
 }
 
 .puzzle-guide-path {

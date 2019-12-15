@@ -1,5 +1,6 @@
 import React from "react";
 import Draggable, { DraggableData } from "react-draggable";
+import classnames from "classnames";
 
 export class PuzzlePiece extends React.PureComponent<
   {
@@ -49,37 +50,25 @@ export class PuzzlePiece extends React.PureComponent<
         position={{ x: this.props.position[0], y: this.props.position[1] }}
       >
         <g
-          onMouseOver={this.handleMouseOver.bind(this)}
-          onMouseOut={this.handleMouseOut.bind(this)}
+          className={classnames({
+            "puzzle-piece-group": true,
+            dragging: this.state.dragging
+          })}
         >
           {pathEls}
         </g>
       </Draggable>
     );
   }
-  handleMouseOver() {
-    if (this.props.locked || this.state.dragging) return;
-    this.setState({
-      color: this.hoverColor
-    });
-  }
-  handleMouseOut() {
-    if (this.props.locked || this.state.dragging) return;
-    this.setState({
-      color: this.props.color
-    });
-  }
   handleDragStart() {
     this.setState({
-      dragging: true,
-      color: this.dragColor
+      dragging: true
     });
     this.props.onDragStart(this.props.index);
   }
   handleDragStop(e: MouseEvent, draggableData: DraggableData) {
     this.setState({
-      dragging: false,
-      color: this.props.color
+      dragging: false
     });
     this.props.onDragStop(this.props.index, draggableData);
   }

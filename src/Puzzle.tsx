@@ -46,7 +46,7 @@ export class Puzzle extends React.PureComponent<
         pieceRef: React.createRef()
       })),
       dragScale: 1,
-      tolerance: 1000
+      tolerance: 30
     };
     this.ref = React.createRef();
     this.handleDragStart = this.handleDragStart.bind(this);

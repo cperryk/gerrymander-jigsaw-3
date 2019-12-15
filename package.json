@@ -10,6 +10,7 @@
     "@types/react-share": "^3.0.3",
     "@types/topojson-server": "^3.0.0",
     "chroma-js": "^2.1.0",
+    "classnames": "^2.2.6",
     "d3": "^5.14.2",
     "date-fns": "^2.8.1",
     "fs-extra": "^8.1.0",
