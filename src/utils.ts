@@ -54,7 +54,8 @@ export function getData(): PuzzleConfiguration {
         transform: [parseFloat(x), parseFloat(y)]
       };
     }),
-    title: configuration.title
+    title: configuration.title,
+    shareText: configuration.shareText
   };
 }
 
