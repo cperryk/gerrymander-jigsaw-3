@@ -8,7 +8,9 @@ export const StartSlide: React.FunctionComponent<{
     <div className="slide">
       <div>
         <h2>{props.title}</h2>
-        <button onClick={props.onStart}>Start</button>
+        <button className="btn-start" onClick={props.onStart}>
+          Start
+        </button>
       </div>
     </div>
   );
