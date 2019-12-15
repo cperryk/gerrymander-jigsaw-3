@@ -16,6 +16,7 @@ export class PuzzlePiece extends React.PureComponent<
   {
     color: string;
     dragging: boolean;
+    hovering: boolean;
   }
 > {
   hoverColor: string;
@@ -24,10 +25,13 @@ export class PuzzlePiece extends React.PureComponent<
     super(props);
     this.state = {
       color: this.props.color,
-      dragging: false
+      dragging: false,
+      hovering: false
     };
     this.hoverColor = "rgb(100%, 100%, 44.1%)";
     this.dragColor = "yellow";
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseOut = this.handleMouseOut.bind(this);
   }
   render() {
     const pathEls = this.props.paths.map((path, index) => {
@@ -52,13 +56,26 @@ export class PuzzlePiece extends React.PureComponent<
         <g
           className={classnames({
             "puzzle-piece-group": true,
-            dragging: this.state.dragging
+            dragging: this.state.dragging,
+            hovering: this.state.hovering
           })}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseOut={this.handleMouseOut}
         >
           {pathEls}
         </g>
       </Draggable>
     );
+  }
+  handleMouseEnter() {
+    this.setState({
+      hovering: true
+    });
+  }
+  handleMouseOut() {
+    this.setState({
+      hovering: false
+    });
   }
   handleDragStart() {
     this.setState({
