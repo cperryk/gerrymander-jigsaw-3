@@ -6,6 +6,8 @@ import {
   EmailShareButton
 } from "react-share";
 
+import { FaRedo, FaFacebookF, FaTwitter, FaRegEnvelope } from "react-icons/fa";
+
 export const EndSlide: React.FunctionComponent<{
   title: string;
   subtitle: string;
@@ -17,24 +19,36 @@ export const EndSlide: React.FunctionComponent<{
     <div className="slide">
       <div>
         <h2>{title}</h2>
-        <p>{subtitle}</p>
-        <button className="btn-restart" onClick={onRestart}>
-          Restart
-        </button>
+        <p className="subtitle">{subtitle}</p>
         <div className="share-btns">
           <FacebookShareButton
-            className="btn-share"
+            className="puzzle-btn"
             url={shareUrl}
             quote={shareText}
           >
-            Share on Facebook
+            <FaFacebookF />
+            <span>Share</span>
           </FacebookShareButton>
-          <TwitterShareButton className="btn-share" url={shareUrl}>
+          <TwitterShareButton
+            className="puzzle-btn"
+            url={shareUrl}
+            title={shareText}
+          >
+            <FaTwitter />
             Tweet
           </TwitterShareButton>
-          <EmailShareButton className="btn-share" url={shareUrl}>
+          <EmailShareButton
+            className="puzzle-btn"
+            url={shareUrl}
+            subject={shareText}
+          >
+            <FaRegEnvelope />
             Email
           </EmailShareButton>
+        </div>
+        <div className="puzzle-btn" onClick={onRestart}>
+          <FaRedo />
+          <span>Restart</span>
         </div>
       </div>
     </div>

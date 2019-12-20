@@ -56,22 +56,30 @@ body {
 }
 
 .share-btns {
-  margin: 2em;
+  display: flex;
+  margin: 0.5em;
 }
 
-.btn-share {
+.subtitle {
+  margin: 0;
+}
+
+.puzzle-btn {
   border: 1px solid #c7c7c7;
   margin: 0.75em;
-  padding: 0.3em 0.5em;
+  padding: 0.5em 0.57143em;
   cursor: pointer;
   background-color: white;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
   border-radius: 2px;
+  display: inline-flex;
+  justify-content: center;
+  line-height: 1;
+  border-radius: 2px;
 }
 
-.btn-share:hover {
-  position: relative;
-  top: 1px;
+.puzzle-btn svg {
+  margin-right: 0.35em;
 }
 
 .puzzle-piece-group .puzzle-piece-path {

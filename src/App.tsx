@@ -5,12 +5,7 @@ import { Puzzle } from "./Puzzle";
 import { StartSlide } from "./StartSlide";
 import { Timer } from "./Timer";
 import { Piece } from "./types";
-import {
-  formatTimeVerbose,
-  getData,
-  millisecondsSince,
-  formatTime
-} from "./utils";
+import { formatTimeVerbose, getData, millisecondsSince } from "./utils";
 
 class App extends React.Component<
   {},
