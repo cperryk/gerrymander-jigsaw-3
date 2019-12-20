@@ -107,19 +107,8 @@ body {
   fill: #e3e3e3;
 }
 
-.btn-start,
-.btn-restart {
-  font-size: 1em;
-  padding: 0.3em 0.5em;
-  cursor: pointer;
-  border: 1px solid #c7c7c7;
-  background: white;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.btn-start:hover,
-.btn-restart:hover {
-  position: relative;
-  top: 1px;
+.btn-start {
+  font-size: 1.5em;
+  background-color: rgb(35, 0, 27);
+  color: white;
 }
