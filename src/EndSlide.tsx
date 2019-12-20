@@ -26,7 +26,7 @@ export const EndSlide: React.FunctionComponent<{
             url={shareUrl}
             quote={shareText}
           >
-            <FaFacebookF />
+            <FaFacebookF color="rgb(59, 89, 152)" />
             <span>Share</span>
           </FacebookShareButton>
           <TwitterShareButton
@@ -34,7 +34,7 @@ export const EndSlide: React.FunctionComponent<{
             url={shareUrl}
             title={shareText}
           >
-            <FaTwitter />
+            <FaTwitter color="rgb(64, 153, 255)" />
             Tweet
           </TwitterShareButton>
           <EmailShareButton
@@ -42,7 +42,7 @@ export const EndSlide: React.FunctionComponent<{
             url={shareUrl}
             subject={shareText}
           >
-            <FaRegEnvelope />
+            <FaRegEnvelope color="rgb(106, 4, 50)" />
             Email
           </EmailShareButton>
         </div>
