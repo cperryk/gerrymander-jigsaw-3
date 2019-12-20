@@ -9,7 +9,7 @@ export const StartSlide: React.FunctionComponent<{
       <div>
         <h2>{props.title}</h2>
         <div className="puzzle-btn" onClick={props.onStart}>
-          Start
+          Start!
         </div>
       </div>
     </div>

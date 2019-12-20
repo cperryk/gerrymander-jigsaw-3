@@ -97,7 +97,10 @@ class App extends React.Component<
     });
   }
   handleStart() {
-    this.setState({ stage: "puzzle" });
+    this.setState({
+      startTime: new Date(),
+      stage: "puzzle"
+    });
   }
   handleSolved() {
     this.setState({
