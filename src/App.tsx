@@ -6,6 +6,7 @@ import { StartSlide } from "./StartSlide";
 import { Timer } from "./Timer";
 import { Piece } from "./types";
 import { formatTimeVerbose, getData, millisecondsSince } from "./utils";
+import pym from "pym.js";
 
 class App extends React.Component<
   {},
@@ -17,6 +18,8 @@ class App extends React.Component<
     viewBox: [number, number, number, number];
     title: string;
     shareText: string;
+    width: number;
+    height: number;
   }
 > {
   public interval: NodeJS.Timeout;
@@ -30,7 +33,9 @@ class App extends React.Component<
       shareText,
       startTime: new Date(),
       duration: 0,
-      stage: "start"
+      stage: "start",
+      width: 300,
+      height: 300
     };
     this.handleSolved = this.handleSolved.bind(this);
     this.handleStart = this.handleStart.bind(this);
@@ -47,6 +52,8 @@ class App extends React.Component<
               stage="initial"
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
+              width={this.state.width}
+              height={this.state.height}
             />
           </div>
         );
@@ -59,6 +66,8 @@ class App extends React.Component<
               onSolved={this.handleSolved}
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
+              width={this.state.width}
+              height={this.state.height}
             />
           </div>
         );
@@ -77,6 +86,8 @@ class App extends React.Component<
               stage="end"
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
+              width={this.state.width}
+              height={this.state.height}
             />
           </div>
         );
@@ -85,6 +96,17 @@ class App extends React.Component<
   componentDidMount() {
     document.addEventListener("touchstart", this.handleTouchStart);
     this.interval = setInterval(() => this.incrementTime(), 1000);
+    const pymChild = new pym.Child();
+    pymChild.getParentPositionInfo();
+    pymChild.onMessage("viewport-iframe-position", message => {
+      const [width, height] = message.split(" ");
+      console.log("setting state", width, height);
+      this.setState({
+        width,
+        height
+      });
+      pymChild.sendHeight();
+    });
   }
   componentWillUnmount() {
     document.removeEventListener("touchstart", this.handleTouchStart);

@@ -11,6 +11,8 @@ export class Puzzle extends React.PureComponent<
     stage: "initial" | "editing" | "end";
     viewBox: [number, number, number, number];
     devMode?: boolean;
+    width: number;
+    height: number;
     onSolved?: () => any;
   },
   {
@@ -23,12 +25,10 @@ export class Puzzle extends React.PureComponent<
       position: [number, number];
       originalPosition: [number, number];
     }[];
-    dragScale: number; // number of pixels per svg unit
     tolerance: number;
   }
 > {
   private ref: Ref<SVGSVGElement>;
-  private resizeHandler?: (...args: any[]) => any;
   constructor(props) {
     super(props);
     const colorScale = chroma
@@ -45,15 +45,14 @@ export class Puzzle extends React.PureComponent<
         guideRef: React.createRef(),
         pieceRef: React.createRef()
       })),
-      dragScale: 1,
       tolerance: 30
     };
     this.ref = React.createRef();
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleDragStop = this.handleDragStop.bind(this);
-    this.resizeHandler = this.handleResize.bind(this);
   }
   render() {
+    const dragScale = this.getDragScale(this.props.width, this.props.height);
     const pieces = this.state.pieces.map((piece, index) => (
       <PuzzlePiece
         index={index}
@@ -62,7 +61,7 @@ export class Puzzle extends React.PureComponent<
         color={piece.color}
         onDragStart={this.handleDragStart}
         onDragStop={this.handleDragStop}
-        dragScale={this.state.dragScale}
+        dragScale={dragScale}
         ref={piece.pieceRef}
         locked={this.props.stage === "end"}
         position={piece.position}
@@ -82,8 +81,8 @@ export class Puzzle extends React.PureComponent<
     return (
       <div className="Puzzle">
         <svg
-          width={window.innerWidth}
-          height={window.innerHeight}
+          width={this.props.width}
+          height={this.props.height}
           viewBox={this.props.viewBox.join(" ")}
           ref={this.ref}
         >
@@ -117,30 +116,16 @@ export class Puzzle extends React.PureComponent<
       }
     }
   }
-  componentDidMount() {
-    this.refreshDragScale();
-    window.addEventListener("resize", this.resizeHandler);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.resizeHandler);
-  }
-  handleResize() {
-    this.forceUpdate(); // re-render first b/c to compute drag scale we need to render new dimensions
-    this.refreshDragScale();
-  }
-  refreshDragScale() {
+  getDragScale(width: number, height: number): number {
     if (typeof this.ref !== "object") return;
     const { viewBox } = this.props;
-    const svgBbox = this.ref.current.getBoundingClientRect();
-    const viewPortAspectRatio = svgBbox.width / svgBbox.height;
+    const viewPortAspectRatio = width / height;
     const viewBoxAspectRatio = viewBox[2] / viewBox[3];
     const heightLimited = viewPortAspectRatio > viewBoxAspectRatio;
     const pixelsPerCoord = heightLimited
-      ? svgBbox.height / this.props.viewBox[3]
-      : svgBbox.width / this.props.viewBox[2];
-    this.setState({
-      dragScale: pixelsPerCoord
-    });
+      ? height / this.props.viewBox[3]
+      : width / this.props.viewBox[2];
+    return pixelsPerCoord;
   }
   movePieceToFront(index: number) {
     if (index === this.state.pieces.length - 1) return;
