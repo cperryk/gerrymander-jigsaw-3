@@ -1,6 +1,6 @@
 import { parse } from "query-string";
 import configuration from "../src/districts/la.json";
-import { PuzzleConfiguration } from "./types";
+import { PuzzleConfiguration, Dimensions } from "./types";
 
 function parseMilliseconds(milliseconds: number): [number, number] {
   const minutes = Math.floor(milliseconds / (1000 * 60));
@@ -61,4 +61,26 @@ export function getData(): PuzzleConfiguration {
 
 export function millisecondsSince(date: Date): number {
   return Math.round(new Date().getTime() - date.getTime());
+}
+
+export function constrainToAspectRatio(
+  { width, height }: Dimensions,
+  aspectRatio: number
+): Dimensions {
+  const ratio = width / height;
+
+  if (ratio > aspectRatio) {
+    // too wide
+    return {
+      height,
+      width: height * aspectRatio
+    };
+  } else if (ratio < aspectRatio) {
+    return {
+      height: width / aspectRatio,
+      width
+    };
+  } else {
+    return { width, height };
+  }
 }

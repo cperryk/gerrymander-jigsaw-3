@@ -4,9 +4,16 @@ import { EndSlide } from "./EndSlide";
 import { Puzzle } from "./Puzzle";
 import { StartSlide } from "./StartSlide";
 import { Timer } from "./Timer";
-import { Piece } from "./types";
-import { formatTimeVerbose, getData, millisecondsSince } from "./utils";
+import { Piece, Dimensions } from "./types";
+import {
+  formatTimeVerbose,
+  getData,
+  millisecondsSince,
+  constrainToAspectRatio
+} from "./utils";
 import pym from "pym.js";
+
+const ASPECT_RATIO = 0.5;
 
 class App extends React.Component<
   {},
@@ -18,8 +25,7 @@ class App extends React.Component<
     viewBox: [number, number, number, number];
     title: string;
     shareText: string;
-    width: number;
-    height: number;
+    dimensions: Dimensions;
   }
 > {
   public interval: NodeJS.Timeout;
@@ -34,8 +40,13 @@ class App extends React.Component<
       startTime: new Date(),
       duration: 0,
       stage: "start",
-      width: 300,
-      height: 300
+      dimensions: constrainToAspectRatio(
+        {
+          width: window.innerWidth,
+          height: window.innerHeight
+        },
+        ASPECT_RATIO
+      )
     };
     this.handleSolved = this.handleSolved.bind(this);
     this.handleStart = this.handleStart.bind(this);
@@ -52,8 +63,8 @@ class App extends React.Component<
               stage="initial"
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
-              width={this.state.width}
-              height={this.state.height}
+              width={this.state.dimensions.width}
+              height={this.state.dimensions.height}
             />
           </div>
         );
@@ -66,8 +77,8 @@ class App extends React.Component<
               onSolved={this.handleSolved}
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
-              width={this.state.width}
-              height={this.state.height}
+              width={this.state.dimensions.width}
+              height={this.state.dimensions.height}
             />
           </div>
         );
@@ -86,8 +97,8 @@ class App extends React.Component<
               stage="end"
               pieces={this.state.pieces}
               viewBox={this.state.viewBox}
-              width={this.state.width}
-              height={this.state.height}
+              width={this.state.dimensions.width}
+              height={this.state.dimensions.height}
             />
           </div>
         );
@@ -99,11 +110,14 @@ class App extends React.Component<
     const pymChild = new pym.Child();
     pymChild.getParentPositionInfo();
     pymChild.onMessage("viewport-iframe-position", message => {
-      const [width, height] = message.split(" ");
-      console.log("setting state", width, height);
       this.setState({
-        width,
-        height
+        dimensions: constrainToAspectRatio(
+          {
+            width: window.innerWidth,
+            height: Number(message.split(" ")[1])
+          },
+          ASPECT_RATIO
+        )
       });
       pymChild.sendHeight();
     });

@@ -16,3 +16,8 @@ export interface PuzzleConfiguration {
   title: string;
   shareText: string;
 }
+
+export interface Dimensions {
+  width: number;
+  height: number;
+}
