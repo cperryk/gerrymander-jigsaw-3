@@ -1,6 +1,13 @@
 body {
   -webkit-touch-callout: none;
   -webkit-user-select: none; /* prevents long touch */
+  background: repeating-linear-gradient(
+    45deg,
+    #ebebeb,
+    #ebebeb 4px,
+    #ffffff 4px,
+    #ffffff 8px
+  );
 }
 
 .App {
@@ -23,9 +30,9 @@ body {
   color: white;
 }
 
-.timer {
+.top-bar {
   font-family: monospace;
-  font-size: 2em;
+  font-size: 1.5em;
   line-height: 1.5em;
   text-align: center;
   background: rgba(255, 255, 255, 0.9);
@@ -33,6 +40,20 @@ body {
   position: fixed;
   top: 0px;
   width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.top-bar > * {
+  margin: 0.5em;
+}
+
+.timer {
+  font-family: monospace;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .App-link {
@@ -64,9 +85,12 @@ body {
   margin: 0;
 }
 
+.share-btns .puzzle-btn {
+  margin: 0.75em;
+}
+
 .puzzle-btn {
   border: 1px solid #c7c7c7;
-  margin: 0.75em;
   padding: 0.5em 0.57143em;
   cursor: pointer;
   background-color: white;
@@ -102,9 +126,9 @@ body {
 }
 
 .puzzle-guide-path {
-  stroke: #e3e3e3;
+  stroke: #cfcfcf;
   stroke-width: 0.5;
-  fill: #e3e3e3;
+  fill: #cfcfcf;
 }
 
 .btn-start {

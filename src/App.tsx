@@ -12,6 +12,7 @@ import {
   constrainToAspectRatio
 } from "./utils";
 import pym from "pym.js";
+import { FaRedo } from "react-icons/fa";
 
 const ASPECT_RATIO = 0.5;
 
@@ -71,7 +72,13 @@ class App extends React.Component<
       case "puzzle":
         return (
           <div className="App">
-            <Timer time={this.state.duration} />
+            <div className="top-bar">
+              <Timer time={this.state.duration} />
+              <div className="puzzle-btn" onClick={this.handleRestart}>
+                <FaRedo />
+                <span>Restart</span>
+              </div>
+            </div>
             <Puzzle
               stage="editing"
               onSolved={this.handleSolved}
@@ -147,7 +154,7 @@ class App extends React.Component<
   handleRestart() {
     this.setState({
       startTime: new Date(),
-      stage: "puzzle",
+      stage: "start",
       duration: 0
     });
   }
