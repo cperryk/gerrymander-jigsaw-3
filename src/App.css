@@ -3,8 +3,8 @@ body {
   -webkit-user-select: none; /* prevents long touch */
   background: repeating-linear-gradient(
     45deg,
-    #ebebeb,
-    #ebebeb 4px,
+    #f5f5f5,
+    #f5f5f5 4px,
     #ffffff 4px,
     #ffffff 8px
   );

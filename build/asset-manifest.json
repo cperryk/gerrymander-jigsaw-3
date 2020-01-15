@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.f1fff74c.chunk.css",
+    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.73aaa8d6.chunk.css",
     "main.js": "/gerrymander-jigsaw-3/build/static/js/main.de090349.chunk.js",
     "main.js.map": "/gerrymander-jigsaw-3/build/static/js/main.de090349.chunk.js.map",
     "runtime-main.js": "/gerrymander-jigsaw-3/build/static/js/runtime-main.6623e039.js",
@@ -8,14 +8,14 @@
     "static/js/2.c1384682.chunk.js": "/gerrymander-jigsaw-3/build/static/js/2.c1384682.chunk.js",
     "static/js/2.c1384682.chunk.js.map": "/gerrymander-jigsaw-3/build/static/js/2.c1384682.chunk.js.map",
     "index.html": "/gerrymander-jigsaw-3/build/index.html",
-    "precache-manifest.74e0bb91acb9cc0122823c86124c76f7.js": "/gerrymander-jigsaw-3/build/precache-manifest.74e0bb91acb9cc0122823c86124c76f7.js",
+    "precache-manifest.3a00e4e9b792bbd5a53611cf92c91b14.js": "/gerrymander-jigsaw-3/build/precache-manifest.3a00e4e9b792bbd5a53611cf92c91b14.js",
     "service-worker.js": "/gerrymander-jigsaw-3/build/service-worker.js",
-    "static/css/main.f1fff74c.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.f1fff74c.chunk.css.map"
+    "static/css/main.73aaa8d6.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.73aaa8d6.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.6623e039.js",
     "static/js/2.c1384682.chunk.js",
-    "static/css/main.f1fff74c.chunk.css",
+    "static/css/main.73aaa8d6.chunk.css",
     "static/js/main.de090349.chunk.js"
   ]
 }
