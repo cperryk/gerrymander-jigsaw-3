@@ -32,6 +32,7 @@ class App extends React.Component<
   constructor(props) {
     super(props);
     const { pieces, viewBox, title, shareText } = getData();
+    console.log(window.innerWidth);
     this.state = {
       pieces,
       viewBox,
@@ -110,11 +111,12 @@ class App extends React.Component<
     const pymChild = new pym.Child();
     pymChild.getParentPositionInfo();
     pymChild.onMessage("viewport-iframe-position", message => {
+      const [width, height] = message.split(" ");
       this.setState({
         dimensions: constrainToAspectRatio(
           {
-            width: window.innerWidth,
-            height: Number(message.split(" ")[1])
+            width: Math.min(window.innerWidth, Number(width)),
+            height: Number(height)
           },
           ASPECT_RATIO
         )
