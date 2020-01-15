@@ -32,7 +32,6 @@ class App extends React.Component<
   constructor(props) {
     super(props);
     const { pieces, viewBox, title, shareText } = getData();
-    console.log(window.innerWidth);
     this.state = {
       pieces,
       viewBox,

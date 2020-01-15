@@ -33,8 +33,8 @@ export function formatTime(milliseconds: number): string {
 
 export function getShareUrl(): string {
   const params = parse(window.location.search);
-  return typeof params.shareUrl === "string"
-    ? decodeURIComponent(params.shareUrl)
+  return typeof params.parentUrl === "string"
+    ? decodeURIComponent(params.parentUrl)
     : window.location.href;
 }
 
