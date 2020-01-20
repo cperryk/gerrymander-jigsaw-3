@@ -68,14 +68,18 @@ export class PuzzlePiece extends React.PureComponent<
     );
   }
   handleMouseEnter() {
-    this.setState({
-      hovering: true
-    });
+    if (!this.state.dragging) {
+      this.setState({
+        hovering: true
+      });
+    }
   }
   handleMouseOut() {
-    this.setState({
-      hovering: false
-    });
+    if (!this.state.dragging) {
+      this.setState({
+        hovering: false
+      });
+    }
   }
   handleDragStart() {
     this.setState({

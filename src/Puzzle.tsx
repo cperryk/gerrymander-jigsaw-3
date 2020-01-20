@@ -81,7 +81,7 @@ export class Puzzle extends React.PureComponent<
     return (
       <div className="puzzle">
         <svg
-          width="100%"
+          width={this.props.width}
           height={this.props.height}
           viewBox={this.props.viewBox.join(" ")}
           ref={this.ref}

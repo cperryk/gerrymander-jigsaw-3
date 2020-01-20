@@ -184,8 +184,8 @@ const INPUT_DIR = join(__dirname, "..", "geojsons");
 const { _, ...argv } = minimist(process.argv);
 
 const conf: Conf = {
-  outPath: join(OUT_DIR, "la.json"),
-  inFilePath: join(INPUT_DIR, "la.geojson"),
+  outPath: join(OUT_DIR, "md.json"),
+  inFilePath: join(INPUT_DIR, "md.geojson"),
   simplificationFactor: 0.0001,
   svgStartX: 0,
   svgStartY: 0,

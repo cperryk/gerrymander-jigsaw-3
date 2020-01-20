@@ -1,5 +1,5 @@
 import { parse } from "query-string";
-import configuration from "../src/districts/la.json";
+import configuration from "../src/districts/md.json";
 import { PuzzleConfiguration, Dimensions } from "./types";
 
 function parseMilliseconds(milliseconds: number): [number, number] {

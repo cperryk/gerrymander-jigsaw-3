@@ -41,13 +41,13 @@ class App extends React.Component<
       startTime: new Date(),
       duration: 0,
       stage: "start",
-      dimensions: constrainToAspectRatio(
-        {
-          width: window.innerWidth,
-          height: window.innerHeight
-        },
-        ASPECT_RATIO
-      )
+      dimensions: {
+        width: window.innerWidth,
+        height: constrainToAspectRatio(
+          { width: window.innerWidth, height: window.innerHeight },
+          ASPECT_RATIO
+        ).height
+      }
     };
     this.handleSolved = this.handleSolved.bind(this);
     this.handleStart = this.handleStart.bind(this);
@@ -66,6 +66,7 @@ class App extends React.Component<
               viewBox={this.state.viewBox}
               width={this.state.dimensions.width}
               height={this.state.dimensions.height}
+              devMode={false}
             />
           </div>
         );
@@ -88,6 +89,7 @@ class App extends React.Component<
               viewBox={this.state.viewBox}
               width={this.state.dimensions.width}
               height={this.state.dimensions.height}
+              devMode={false}
             />
           </div>
         );
@@ -121,13 +123,16 @@ class App extends React.Component<
     pymChild.onMessage("viewport-iframe-position", message => {
       const [width, height] = message.split(" ");
       this.setState({
-        dimensions: constrainToAspectRatio(
-          {
-            width: Math.min(window.innerWidth, Number(width)),
-            height: Number(height)
-          },
-          ASPECT_RATIO
-        )
+        dimensions: {
+          width,
+          height: constrainToAspectRatio(
+            {
+              width: width,
+              height: Number(height)
+            },
+            ASPECT_RATIO
+          ).height
+        }
       });
       pymChild.sendHeight();
     });
