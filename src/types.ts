@@ -21,3 +21,16 @@ export interface Dimensions {
   width: number;
   height: number;
 }
+
+export interface RawConfig {
+  transforms: { [key: string]: [string, string] };
+  paths: { [key: string]: string[] };
+  viewBox: { minX: number; minY: number; width: number; height: number };
+  title: string;
+  shareText: string;
+}
+
+export interface QueryParams {
+  puzzle: string;
+  parentUrl?: string;
+}

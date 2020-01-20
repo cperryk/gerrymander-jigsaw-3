@@ -1,6 +1,23 @@
 import { parse } from "query-string";
-import configuration from "../src/districts/wv.json";
-import { PuzzleConfiguration, Dimensions } from "./types";
+import {
+  PuzzleConfiguration,
+  Dimensions,
+  RawConfig,
+  QueryParams
+} from "./types";
+
+const QUERY_PARAMS = parseQueryParams();
+
+function parseQueryParams(): QueryParams {
+  const params = parse(window.location.search);
+  if (!(params.puzzle && typeof params.puzzle === "string")) {
+    throw new Error("Puzzle not defined in the URL query string");
+  }
+  return {
+    puzzle: params.puzzle,
+    parentUrl: (params.parentUrl === "string" && params.parentUrl) || undefined
+  };
+}
 
 function parseMilliseconds(milliseconds: number): [number, number] {
   const minutes = Math.floor(milliseconds / (1000 * 60));
@@ -32,13 +49,16 @@ export function formatTime(milliseconds: number): string {
 }
 
 export function getShareUrl(): string {
-  const params = parse(window.location.search);
-  return typeof params.parentUrl === "string"
-    ? decodeURIComponent(params.parentUrl)
+  return typeof QUERY_PARAMS.parentUrl === "string"
+    ? decodeURIComponent(QUERY_PARAMS.parentUrl)
     : window.location.href;
 }
 
-export function getData(): PuzzleConfiguration {
+export function getConfigUrl(): string {
+  return `puzzles/${QUERY_PARAMS.puzzle}.json`;
+}
+
+export function parseConfig(configuration: RawConfig): PuzzleConfiguration {
   return {
     viewBox: [
       configuration.viewBox.minX,

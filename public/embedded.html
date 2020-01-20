@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <sript src="https://polyfill.io/v3/polyfill.min.js"></sript>
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -25,7 +26,7 @@
       src="https://pym.nprapps.org/pym.v1.min.js"
     ></script>
     <script>
-      var pymParent = new pym.Parent("interactive", "index.html", {
+      var pymParent = new pym.Parent("interactive", "index.html?puzzle=ga", {
         trackscroll: true
       });
     </script>
