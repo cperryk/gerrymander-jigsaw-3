@@ -9,14 +9,20 @@ import {
 const QUERY_PARAMS = parseQueryParams();
 
 function parseQueryParams(): QueryParams {
-  const params = parse(window.location.search);
+  const params = parse(window.location.search, { parseBooleans: true });
   if (!(params.puzzle && typeof params.puzzle === "string")) {
     throw new Error("Puzzle not defined in the URL query string");
   }
   return {
     puzzle: params.puzzle,
-    parentUrl: (params.parentUrl === "string" && params.parentUrl) || undefined
+    parentUrl: (params.parentUrl === "string" && params.parentUrl) || undefined,
+    devMode:
+      (typeof params.devMode === "boolean" && params.devMode) || undefined
   };
+}
+
+export function getDevMode(): boolean {
+  return !!QUERY_PARAMS.devMode;
 }
 
 function parseMilliseconds(milliseconds: number): [number, number] {

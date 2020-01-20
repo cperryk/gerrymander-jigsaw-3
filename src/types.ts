@@ -33,4 +33,5 @@ export interface RawConfig {
 export interface QueryParams {
   puzzle: string;
   parentUrl?: string;
+  devMode?: boolean;
 }

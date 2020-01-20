@@ -1,5 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Preparing a new puzzle data from geographic data
+
+1. Given a shapefile, you must first convert it to geojson. You can do this easily in QGIS. Drag the shapefile onto the QGIS stage, select the new layer, and export it as GeoJSON. Be sure to set the `WRITE_BBOX` option to `YES`.
+2. From the root directory of this repo, run `npm run process-data -- --in foo.geojson --out public/puzzles/foo.json`, where `foo.geojson` is the path to the geojson you created in the preceding step. This script converts the GeoJSON to SVG paths, first simplifying it along the way via TopoJSON. If the shape appears oversimplified, tweak the `simplificationFactor` option.
+3. Examine the newly created `public/puzzles/foo.json`. The `paths` property contains a mapping of features to paths. The `viewBox` property contains the min x and y coordinates, as well as the width and height of the puzzle in the coordinate reference system.
+4. Set a `title` property to a string, which will be the title the user sees on the first stage of the interactive.
+5. Set a `shareText` property to a string, which will be the text that appears in the share dialog the share buttons open at the end of the interactive. The string `{time}` will be filled in with the time the user took to complete the puzzle.
+6. Run `npm run start` and open your new puzzle by going to `http://localhost:3000/?puzzle=foo&devMode=true`. Note the URL parameters.
+7. The first time you view the puzzle, it will appear solved. Open the JavaScript console and drag the pieces to their desired start locations. Note that every time you drop a piece, the transform positions of each piece is logged in the console.
+8. Once all pieces are their desired positions, copy the last set of transformation positions logged and set a `transforms` property in `public/puzzles/foo.json` to this string. Then, upon reloading the puzzle, all pieces should start in the initial positions you have specified.
+
 ## Available Scripts
 
 In the project directory, you can run:

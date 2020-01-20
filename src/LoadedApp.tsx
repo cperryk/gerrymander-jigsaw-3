@@ -10,7 +10,8 @@ import { Dimensions, Piece, PuzzleConfiguration } from "./types";
 import {
   constrainToAspectRatio,
   formatTimeVerbose,
-  millisecondsSince
+  millisecondsSince,
+  getDevMode
 } from "./utils";
 
 const ASPECT_RATIO = 0.5;
@@ -67,7 +68,6 @@ class LoadedApp extends React.Component<
               viewBox={this.state.viewBox}
               width={this.state.dimensions.width}
               height={this.state.dimensions.height}
-              devMode={false}
             />
           </div>
         );
@@ -90,7 +90,7 @@ class LoadedApp extends React.Component<
               viewBox={this.state.viewBox}
               width={this.state.dimensions.width}
               height={this.state.dimensions.height}
-              devMode={false}
+              devMode={getDevMode()}
             />
           </div>
         );

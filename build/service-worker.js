@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/gerrymander-jigsaw-3/build/precache-manifest.db34a3de941ed09ba2d0156b64d996dd.js"
+  "/gerrymander-jigsaw-3/build/precache-manifest.5c795f257f19e8a41a9465a0ffc5a3df.js"
 );
 
 self.addEventListener('message', (event) => {
