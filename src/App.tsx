@@ -71,12 +71,14 @@ class App extends React.Component<
         );
       case "puzzle":
         return (
-          <div className="App">
+          <div className="App no-touch-action">
             <div className="top-bar">
-              <Timer time={this.state.duration} />
-              <div className="puzzle-btn" onClick={this.handleRestart}>
-                <FaRedo />
-                <span>Restart</span>
+              <div className="top-bar-interior">
+                <Timer time={this.state.duration} />
+                <div className="puzzle-btn" onClick={this.handleRestart}>
+                  <FaRedo />
+                  <span>Restart</span>
+                </div>
               </div>
             </div>
             <Puzzle
@@ -159,8 +161,10 @@ class App extends React.Component<
     });
   }
   handleTouchStart(e: TouchEvent) {
-    e.preventDefault();
-    e.stopPropagation();
+    if (this.state.stage === "puzzle") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   }
 }
 

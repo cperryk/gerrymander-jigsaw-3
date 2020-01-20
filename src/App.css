@@ -10,9 +10,12 @@ body {
   );
 }
 
+.no-touch-action {
+  touch-action: none;
+}
+
 .App {
   text-align: center;
-  touch-action: none;
 }
 
 .App-logo {
@@ -31,8 +34,6 @@ body {
 }
 
 .top-bar {
-  font-size: 1.5em;
-  line-height: 1.5em;
   text-align: center;
   background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid #c7c7c7;
@@ -40,7 +41,15 @@ body {
   top: 0px;
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
+}
+
+.top-bar-interior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .top-bar > * {
@@ -48,11 +57,12 @@ body {
 }
 
 .timer {
-  font-family: monospace;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+
+.time {
+  font-family: monospace;
+  font-size: 1.3em;
 }
 
 .App-link {
