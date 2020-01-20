@@ -4,11 +4,11 @@ import { FeatureCollection } from "geojson";
 import { outputJson, readJsonSync, statSync, existsSync } from "fs-extra";
 import xml2js from "xml2js";
 import { Conf } from "./conf";
-import minimist from "minimist";
 
 import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
 import simplifyGeojson from "./simplify";
+import minimist from "minimist";
 
 const geojsonToSvg = require("geojson-to-svg");
 
@@ -178,14 +178,11 @@ async function writeJson(path: string, input: any) {
   console.log(`written: ${path} (${megabytes} kb}`);
 }
 
-const OUT_DIR = join(__dirname, "..", "src", "districts");
-const INPUT_DIR = join(__dirname, "..", "geojsons");
-
 const { _, ...argv } = minimist(process.argv);
 
 const conf: Conf = {
-  outPath: join(OUT_DIR, "md.json"),
-  inFilePath: join(INPUT_DIR, "md.geojson"),
+  outPath: join(argv.out),
+  inFilePath: join(argv.in),
   simplificationFactor: 0.0001,
   svgStartX: 0,
   svgStartY: 0,
