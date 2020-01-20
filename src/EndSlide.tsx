@@ -38,6 +38,7 @@ export const EndSlide: React.FunctionComponent<{
             Tweet
           </TwitterShareButton>
           <EmailShareButton
+            openWindow={true}
             className="puzzle-btn"
             url={shareUrl}
             subject={shareText}
