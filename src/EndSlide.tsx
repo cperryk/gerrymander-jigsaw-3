@@ -16,7 +16,7 @@ export const EndSlide: React.FunctionComponent<{
 }> = ({ title, subtitle, shareText, onRestart }) => {
   const shareUrl = getShareUrl();
   return (
-    <div className="slide">
+    <div className="slide fade-in">
       <div>
         <h2>{title}</h2>
         <p className="subtitle">{subtitle}</p>

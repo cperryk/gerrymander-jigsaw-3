@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Ref } from "react";
 import Draggable, { DraggableData } from "react-draggable";
 import classnames from "classnames";
+import { createPortal } from "react-dom";
 
 export class PuzzlePiece extends React.PureComponent<
   {
@@ -12,6 +13,7 @@ export class PuzzlePiece extends React.PureComponent<
     dragScale: number;
     position: [number, number];
     index: number;
+    svgRef: Ref<SVGElement>;
   },
   {
     color: string;
@@ -45,6 +47,8 @@ export class PuzzlePiece extends React.PureComponent<
         />
       );
     });
+    const svgRef =
+      typeof this.props.svgRef === "object" ? this.props.svgRef.current : null;
     return (
       <Draggable
         scale={this.props.dragScale}
@@ -62,6 +66,7 @@ export class PuzzlePiece extends React.PureComponent<
           onMouseEnter={this.handleMouseEnter}
           onMouseOut={this.handleMouseOut}
         >
+          <rect></rect>
           {pathEls}
         </g>
       </Draggable>

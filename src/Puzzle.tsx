@@ -65,6 +65,7 @@ export class Puzzle extends React.PureComponent<
         ref={piece.pieceRef}
         locked={this.props.stage === "end"}
         position={piece.position}
+        svgRef={this.ref}
       />
     ));
     const guides = this.state.pieces.map((piece, index) => (
