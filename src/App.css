@@ -28,9 +28,8 @@ body {
 
 .top-bar {
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid #c7c7c7;
   position: fixed;
+  pointer-events: none;
   top: 0px;
   width: 100%;
   display: flex;
@@ -40,9 +39,9 @@ body {
 
 .top-bar-interior {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
+  justify-content: center;
 }
 
 .top-bar > * {
@@ -51,6 +50,7 @@ body {
 
 .timer {
   line-height: 1;
+  margin-right: 1em;
 }
 
 .time {
@@ -92,6 +92,7 @@ body {
 }
 
 .puzzle-btn {
+  pointer-events: all;
   border: 1px solid #c7c7c7;
   padding: 0.5em 0.57143em;
   cursor: pointer;
