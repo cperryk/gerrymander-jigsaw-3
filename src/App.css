@@ -26,31 +26,28 @@ body {
   color: white;
 }
 
-.top-bar {
-  text-align: center;
+.top-bar .puzzle-btn {
   position: fixed;
-  pointer-events: none;
-  top: 0px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.top-bar-interior {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: center;
-}
-
-.top-bar > * {
-  margin: 0.5em;
+  right: 2px;
+  top: 2px;
 }
 
 .timer {
   line-height: 1;
   margin-right: 1em;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 0.5em 0.57143em;
+  display: flex;
+  left: 2px;
+  top: 2px;
+  position: fixed;
+  border: 1px solid #c7c7c7;
+  border-radius: 2px;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+}
+
+.timer svg {
+  margin-right: 3px;
 }
 
 .time {

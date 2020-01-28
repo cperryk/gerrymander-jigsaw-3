@@ -75,12 +75,10 @@ class LoadedApp extends React.Component<
         return (
           <div className="App no-touch-action">
             <div className="top-bar">
-              <div className="top-bar-interior">
-                <Timer time={this.state.duration} />
-                <div className="puzzle-btn" onClick={this.handleRestart}>
-                  <FaRedo />
-                  <span>Restart</span>
-                </div>
+              <Timer time={this.state.duration} />
+              <div className="puzzle-btn" onClick={this.handleRestart}>
+                <FaRedo />
+                <span>Restart</span>
               </div>
             </div>
             <Puzzle
