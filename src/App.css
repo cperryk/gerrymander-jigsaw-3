@@ -5,6 +5,7 @@ body {
 
 .no-touch-action {
   touch-action: none;
+  touch-action: pinch-zoom;
 }
 
 .App {
