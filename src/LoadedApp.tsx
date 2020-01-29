@@ -125,7 +125,7 @@ class LoadedApp extends React.Component<
       const [width, height] = message.split(" ");
       this.setState({
         dimensions: {
-          width,
+          width: window.innerWidth,
           height: constrainToAspectRatio(
             {
               width: width,
