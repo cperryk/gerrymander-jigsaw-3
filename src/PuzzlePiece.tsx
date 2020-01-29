@@ -1,7 +1,6 @@
 import React, { Ref } from "react";
 import Draggable, { DraggableData } from "react-draggable";
 import classnames from "classnames";
-import { createPortal } from "react-dom";
 
 export class PuzzlePiece extends React.PureComponent<
   {
@@ -47,8 +46,6 @@ export class PuzzlePiece extends React.PureComponent<
         />
       );
     });
-    const svgRef =
-      typeof this.props.svgRef === "object" ? this.props.svgRef.current : null;
     return (
       <Draggable
         scale={this.props.dragScale}
