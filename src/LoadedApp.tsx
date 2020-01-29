@@ -55,6 +55,7 @@ class LoadedApp extends React.Component<
     this.handleStart = this.handleStart.bind(this);
     this.handleRestart = this.handleRestart.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
+    this.handleResize = this.handleResize.bind(this);
   }
   render() {
     switch (this.state.stage) {
@@ -119,6 +120,7 @@ class LoadedApp extends React.Component<
     this.interval = setInterval(() => this.incrementTime(), 1000);
     const pymChild = new pym.Child();
     pymChild.getParentPositionInfo();
+
     pymChild.onMessage("viewport-iframe-position", message => {
       const [width, height] = message.split(" ");
       this.setState({
@@ -136,7 +138,25 @@ class LoadedApp extends React.Component<
       pymChild.sendHeight();
     });
   }
+  handleResize() {
+    window.addEventListener("resize", () => {
+      const width = window.innerWidth;
+      this.setState({
+        dimensions: {
+          width,
+          height: constrainToAspectRatio(
+            {
+              width: width,
+              height: window.innerHeight
+            },
+            ASPECT_RATIO
+          ).height
+        }
+      });
+    });
+  }
   componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
     document.removeEventListener("touchstart", this.handleTouchStart);
     clearInterval(this.interval);
   }
