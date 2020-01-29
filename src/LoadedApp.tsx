@@ -117,6 +117,7 @@ class LoadedApp extends React.Component<
   }
   componentDidMount() {
     document.addEventListener("touchstart", this.handleTouchStart);
+    window.addEventListener("resize", this.handleResize);
     this.interval = setInterval(() => this.incrementTime(), 1000);
     const pymChild = new pym.Child();
     pymChild.getParentPositionInfo();
@@ -139,20 +140,18 @@ class LoadedApp extends React.Component<
     });
   }
   handleResize() {
-    window.addEventListener("resize", () => {
-      const width = window.innerWidth;
-      this.setState({
-        dimensions: {
-          width,
-          height: constrainToAspectRatio(
-            {
-              width: width,
-              height: window.innerHeight
-            },
-            ASPECT_RATIO
-          ).height
-        }
-      });
+    const width = window.innerWidth;
+    this.setState({
+      dimensions: {
+        width,
+        height: constrainToAspectRatio(
+          {
+            width: width,
+            height: window.innerHeight
+          },
+          ASPECT_RATIO
+        ).height
+      }
     });
   }
   componentWillUnmount() {
