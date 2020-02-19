@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.403f08a4.chunk.css",
-    "main.js": "/gerrymander-jigsaw-3/build/static/js/main.0049a544.chunk.js",
-    "main.js.map": "/gerrymander-jigsaw-3/build/static/js/main.0049a544.chunk.js.map",
+    "main.css": "/gerrymander-jigsaw-3/build/static/css/main.410cf370.chunk.css",
+    "main.js": "/gerrymander-jigsaw-3/build/static/js/main.2e3428fc.chunk.js",
+    "main.js.map": "/gerrymander-jigsaw-3/build/static/js/main.2e3428fc.chunk.js.map",
     "runtime-main.js": "/gerrymander-jigsaw-3/build/static/js/runtime-main.6623e039.js",
     "runtime-main.js.map": "/gerrymander-jigsaw-3/build/static/js/runtime-main.6623e039.js.map",
     "static/js/2.53a10121.chunk.js": "/gerrymander-jigsaw-3/build/static/js/2.53a10121.chunk.js",
     "static/js/2.53a10121.chunk.js.map": "/gerrymander-jigsaw-3/build/static/js/2.53a10121.chunk.js.map",
     "index.html": "/gerrymander-jigsaw-3/build/index.html",
-    "precache-manifest.7189203a83217763386a05fd07203291.js": "/gerrymander-jigsaw-3/build/precache-manifest.7189203a83217763386a05fd07203291.js",
+    "precache-manifest.c5a5a129cb0d077e732cc0a432363c7b.js": "/gerrymander-jigsaw-3/build/precache-manifest.c5a5a129cb0d077e732cc0a432363c7b.js",
     "service-worker.js": "/gerrymander-jigsaw-3/build/service-worker.js",
-    "static/css/main.403f08a4.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.403f08a4.chunk.css.map"
+    "static/css/main.410cf370.chunk.css.map": "/gerrymander-jigsaw-3/build/static/css/main.410cf370.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.6623e039.js",
     "static/js/2.53a10121.chunk.js",
-    "static/css/main.403f08a4.chunk.css",
-    "static/js/main.0049a544.chunk.js"
+    "static/css/main.410cf370.chunk.css",
+    "static/js/main.2e3428fc.chunk.js"
   ]
 }
