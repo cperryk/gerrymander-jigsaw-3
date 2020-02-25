@@ -15,7 +15,8 @@ function parseQueryParams(): QueryParams {
   }
   return {
     puzzle: params.puzzle,
-    parentUrl: (params.parentUrl === "string" && params.parentUrl) || undefined,
+    parentUrl:
+      (typeof params.parentUrl === "string" && params.parentUrl) || undefined,
     devMode:
       (typeof params.devMode === "boolean" && params.devMode) || undefined
   };
@@ -56,7 +57,7 @@ export function formatTime(milliseconds: number): string {
 
 export function getShareUrl(): string {
   return typeof QUERY_PARAMS.parentUrl === "string"
-    ? decodeURIComponent(QUERY_PARAMS.parentUrl)
+    ? QUERY_PARAMS.parentUrl
     : window.location.href;
 }
 

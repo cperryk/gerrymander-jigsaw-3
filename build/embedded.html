@@ -26,9 +26,13 @@
       src="https://pym.nprapps.org/pym.v1.min.js"
     ></script>
     <script>
-      var pymParent = new pym.Parent("interactive", "index.html?puzzle=ga", {
-        trackscroll: true
-      });
+      var pymParent = new pym.Parent(
+        "interactive",
+        "index.html?puzzle=ga&parentUrl=http%3A%2F%2Ffoo.com",
+        {
+          trackscroll: true
+        }
+      );
     </script>
   </body>
 </html>
