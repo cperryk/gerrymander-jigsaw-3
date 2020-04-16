@@ -146,7 +146,6 @@ export class Puzzle extends React.PureComponent<
     const { tolerance } = this.state;
     const out =
       x > -tolerance && x < tolerance && y > -tolerance && y < tolerance;
-    console.log(x, y, out);
     return out;
   }
   isAllSolved() {
