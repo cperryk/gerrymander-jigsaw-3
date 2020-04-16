@@ -167,7 +167,7 @@ async function go(conf: Conf) {
     paths: await toSvgHash(geojson, conf),
     viewBox: geoJsonViewBoxToSvgViewBox(geojson.bbox, conf)
   });
-  console.log(svgHash);
+
   writeJson(conf.outPath, svgHash);
 }
 

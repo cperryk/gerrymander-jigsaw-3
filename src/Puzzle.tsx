@@ -46,6 +46,7 @@ export class Puzzle extends React.PureComponent<
         guideRef: React.createRef(),
         pieceRef: React.createRef()
       })),
+      // i.e. one percent of the diagonal length of the bbox
       tolerance: 0.01 * hypotenuse(this.props.viewBox[2], this.props.viewBox[3])
     };
     this.ref = React.createRef();
