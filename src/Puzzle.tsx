@@ -4,6 +4,7 @@ import { PuzzlePiece } from "./PuzzlePiece";
 import { PuzzleGuide } from "./PuzzleGuide";
 import { Piece } from "./types";
 import { DraggableData } from "react-draggable";
+import { hypotenuse } from "./utils";
 
 export class Puzzle extends React.PureComponent<
   {
@@ -45,7 +46,7 @@ export class Puzzle extends React.PureComponent<
         guideRef: React.createRef(),
         pieceRef: React.createRef()
       })),
-      tolerance: 30
+      tolerance: 0.01 * hypotenuse(this.props.viewBox[2], this.props.viewBox[3])
     };
     this.ref = React.createRef();
     this.handleDragStart = this.handleDragStart.bind(this);
@@ -143,7 +144,10 @@ export class Puzzle extends React.PureComponent<
       position: [x, y]
     } = this.state.pieces[index];
     const { tolerance } = this.state;
-    return x > -tolerance && x < tolerance && y > -tolerance && y < tolerance;
+    const out =
+      x > -tolerance && x < tolerance && y > -tolerance && y < tolerance;
+    console.log(x, y, out);
+    return out;
   }
   isAllSolved() {
     this.state.pieces.forEach((piece, index) => this.isPieceSolved(index));

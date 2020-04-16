@@ -111,3 +111,7 @@ export function constrainToAspectRatio(
     return { width, height };
   }
 }
+
+export function hypotenuse(a: number, b: number): number {
+  return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+}
