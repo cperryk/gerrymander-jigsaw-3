@@ -21,7 +21,7 @@
     "query-string": "^6.9.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-draggable": "^4.1.0",
+    "react-draggable": "^4.3.1",
     "react-ions": "^5.3.1",
     "react-raphael": "^0.9.0",
     "react-request": "^3.1.2",
