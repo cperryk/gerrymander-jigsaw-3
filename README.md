@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Preparing a new puzzle data from geographic data
 
-1. Given a shapefile, you must first convert it to geojson. You can do this easily in QGIS. Drag the shapefile onto the QGIS stage, select the new layer, and export it as GeoJSON. Be sure to set the `WRITE_BBOX` option to `YES`.
+1. Given a shapefile, you must first convert it to geojson. You can do this easily in QGIS. Drag the shapefile onto the QGIS stage, select the new layer, and export it as GeoJSON. Be sure to set the `WRITE_BBOX` option to `YES`. You may want to export it with a new coordinate reference system (CRS) or the state's shape may appear off by itself.
 2. From the root directory of this repo, run `npm run process-data -- --in foo.geojson --out public/puzzles/foo.json`, where `foo.geojson` is the path to the geojson you created in the preceding step. This script converts the GeoJSON to SVG paths, first simplifying it along the way via TopoJSON. If the shape appears oversimplified, tweak the `simplificationFactor` option.
 3. Examine the newly created `public/puzzles/foo.json`. The `paths` property contains a mapping of features to paths. The `viewBox` property contains the min x and y coordinates, as well as the width and height of the puzzle in the coordinate reference system.
 4. Set a `title` property to a string, which will be the title the user sees on the first stage of the interactive.
