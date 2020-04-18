@@ -9,6 +9,7 @@ import SVGO from "svgo";
 import { scaleLinear, ScaleLinear } from "d3";
 import simplifyGeojson from "./simplify";
 import minimist from "minimist";
+import { bytesToKilobytes } from "./utilities";
 
 const geojsonToSvg = require("geojson-to-svg");
 
@@ -155,27 +156,26 @@ async function go(conf: Conf) {
   let geojson = await readJsonSync(conf.inFilePath);
   geojson = simplifyGeojson(geojson, conf);
 
-  const svgHash = {
+  const outData = {
     transforms: {},
     paths: [],
     viewBox: []
   };
   if (existsSync(conf.outPath)) {
-    Object.assign(svgHash, readJsonSync(conf.outPath));
+    Object.assign(outData, readJsonSync(conf.outPath));
   }
-  Object.assign(svgHash, {
+  Object.assign(outData, {
     paths: await toSvgHash(geojson, conf),
     viewBox: geoJsonViewBoxToSvgViewBox(geojson.bbox, conf)
   });
-  console.log(svgHash);
-  writeJson(conf.outPath, svgHash);
+  writeJson(conf.outPath, outData);
 }
 
 async function writeJson(path: string, input: any) {
   await outputJson(conf.outPath, input);
   const { size } = statSync(path);
-  const megabytes = size / 1000.0;
-  console.log(`written: ${path} (${megabytes} kb}`);
+  const kilobytes = bytesToKilobytes(size);
+  console.log(`written: ${path} (${kilobytes} kb}`);
 }
 
 const { _, ...argv } = minimist(process.argv);
