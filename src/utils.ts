@@ -81,8 +81,8 @@ export function parseConfig(configuration: RawConfig): PuzzleConfiguration {
         transform: [parseFloat(x), parseFloat(y)]
       };
     }),
-    title: configuration.title,
-    shareText: configuration.shareText
+    title: configuration.title || 'How quickly can you solve this puzzle?',
+    shareText: configuration.shareText || 'I solved the puzzle in {time}!'
   };
 }
 
