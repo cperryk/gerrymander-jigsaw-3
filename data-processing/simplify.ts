@@ -20,7 +20,7 @@ function simplifyUntil(
   geojson: FeatureCollection,
   maxKilobytes: number
 ): FeatureCollection {
-  let simplificationFactor = 0.0001;
+  let simplificationFactor = 0.0000001;
   let out;
   let lastSize;
   while (lastSize === undefined || lastSize > maxKilobytes) {
