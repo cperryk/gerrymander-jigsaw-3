@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the source code of Slate.com's [Gerrymander Jigsaw Puzzles](https://slate.com/tag/gerrymander-puzzles) from 2020.
+
+It's a purely front-end React application. See `src/App.tsx` for the root application component.
 
 ## Preparing a new puzzle data from geographic data
 
